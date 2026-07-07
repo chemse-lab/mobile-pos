@@ -72,92 +72,7 @@
 2. افتحه بأي متصفح (Chrome, Firefox, Edge, Safari)
 3. جاهز!
 
-### الطريقة 2: GitHub Pages
-- انشر الريبو على GitHub Pages → سيصبح لك رابط رسمي يعمل من أي جهاز.
-
-### الطريقة 3: تطبيق أندرويد/iOS (Capacitor)
-```bash
-npm install -g @capacitor/cli
-npx cap init "Mobile POS" com.yourbrand.mobilepos
-npx cap add android
-npx cap sync
-# افتح في Android Studio وابنِ APK/AAB
-```
-
-### الطريقة 4: تطبيق سطح المكتب (Electron)
-```bash
-npm install -g electron
-electron index.html
-```
-
-</div>
-
----
-
-## 🎯 نظام التجربة والتفعيل / Trial & Activation
-
-<div dir="rtl">
-
-### للمستخدم النهائي:
-1. **7 أيام تجربة كاملة** — كل الميزات، بدون قيود.
-2. بعد انتهاء التجربة، تظهر شاشة قفل تطلب كود التفعيل.
-3. النسخ الاحتياطية تبقى متاحة حتى بعد انتهاء التجربة.
-4. المستخدم ينسخ **معرّف التثبيت** (Install ID) ويُرسله عبر WhatsApp.
-5. بعد الدفع، يستلم كود التفعيل ويُدخله → تُفتح النسخة للأبد.
-
-### للبائع:
-- استخدم `activation-tool.html` (⚠ **لا ترفعه على GitHub علناً**) لتوليد الأكواد.
-- الأداة تأخذ Install ID → تُنتج كود التفعيل الفريد لكل عميل.
-- الأكواد لا تعمل إلا على الجهاز الذي طُلبت له.
-
-</div>
-
----
-
-## ⚙️ الإعداد قبل النشر / Pre-release Configuration
-
-<div dir="rtl">
-
-**قبل نشر أول نسخة تجارية، عدّل الثوابت التالية في `index.html`:**
-
-</div>
-
-```javascript
-const CONFIG = {
-  APP_NAME: 'Mobile POS',
-  VERSION: '1.0.0',
-  SECRET: 'MP-CHANGE-ME-BEFORE-RELEASE-9a7d21',   // ⚠ غيّر هذا السر
-  TRIAL_DAYS: 7,
-  SELLER: {
-    name: 'ChemseEddine',                          // اسمك
-    phone: '+213 555 000 000',                     // رقمك
-    whatsapp: 'https://wa.me/213555000000'         // WhatsApp
-  }
-};
-```
-
-<div dir="rtl">
-
-**⚠ مهم جداً:** نفس قيمة `SECRET` يجب أن تكون في `activation-tool.html` أيضاً — وإلا فلن تعمل الأكواد.
-
-</div>
-
----
-
-## 📁 هيكل المشروع / Project Structure
-
-```
-mobile-pos/
-├── index.html              ← التطبيق (رفعه على GitHub)
-├── activation-tool.html    ← أداة توليد الأكواد (⚠ لا ترفعه على GitHub)
-├── README.md               ← هذا الملف
-├── LICENSE                 ← الترخيص
-├── manifest.webmanifest    ← PWA manifest
-└── .gitignore
-```
-
----
-
+## 📁 هيكل المشروع / 
 ## 🖨️ الطباعة / Printing
 
 <div dir="rtl">
@@ -194,14 +109,8 @@ mobile-pos/
 
 ## 📞 الدعم / Support
 
-<div dir="rtl">
 
-- **الأخطاء والاقتراحات:** افتح Issue على GitHub
-- **طلب التفعيل:** WhatsApp: `+213 555 000 000`
-- **التطوير المخصّص:** راسلني للنسخ الاحترافية
-
-</div>
-
+- **
 ---
 
 ## 📜 الترخيص / License
