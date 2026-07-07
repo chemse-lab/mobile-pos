@@ -323,8 +323,17 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
   #printArea.a4 .a4-tot tr td{padding:6px 10px}
   #printArea.a4 .a4-tot .grand{font-size:17px;font-weight:900;border-top:2px solid #222}
   #printArea.a4 .a4-foot{margin-top:30px;text-align:center;color:#666;font-size:12px;border-top:1px dashed #ccc;padding-top:14px}
+  /* Labels sheet — sticker grid */
+  #printArea.labels{width:100%;padding:4mm}
+  #printArea.labels .lbl-sheet{display:flex;flex-wrap:wrap;gap:3mm}
+  #printArea.labels .lbl-card{border:1px solid #000;border-radius:2mm;width:48mm;padding:2mm;text-align:center;page-break-inside:avoid;color:#000}
   @page{margin:0}
 }
+/* On-screen label card (preview + print base) */
+.lbl-card{text-align:center;color:#000;background:#fff;border-radius:8px;padding:8px 10px;min-width:150px}
+.lbl-name{font-size:12px;font-weight:800;color:#000;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lbl-bc{display:block;margin:0 auto;max-width:100%}
+.lbl-price{font-size:14px;font-weight:900;color:#000;margin-top:2px}
 
 /* ============ RESPONSIVE ============ */
 @media(max-width:1180px){.pos{grid-template-columns:1fr;display:flex;flex-direction:column}.cart{position:static;order:-1;max-height:none}.pos>div:first-child{order:1}.cart-items{max-height:240px}}
@@ -348,6 +357,7 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js" defer></script>
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js" defer></script>
 </head>
 <body>
 <!-- LOCK SCREEN -->
@@ -1115,7 +1125,7 @@ async function renderPosGrid(){
       .map(p=>({type:'product',id:p.id,name:p.name,price:p.sell,sub:t('stock')+': '+p.qty,out:num(p.qty)<=0,ic:'box'}));
   }
   if(S.posCat==='all'||S.posCat==='cat_devices'){
-    tiles=tiles.concat(devs.filter(d=>d.status==='available'&&(!q||(d.brand+' '+d.model).toLowerCase().includes(q)||(d.imei1||'').includes(q)))
+    tiles=tiles.concat(devs.filter(d=>d.status==='available'&&(!q||(d.brand+' '+d.model).toLowerCase().includes(q)||(d.imei1||'').includes(q)||(d.imei2||'').includes(q)||(d.barcode||'').includes(q)))
       .map(d=>({type:'device',id:d.id,name:d.brand+' '+d.model+(d.storage?' '+d.storage:''),price:d.sell,sub:'IMEI '+(d.imei1||'').slice(-6),out:false,ic:'phone'})));
   }
   el.innerHTML=tiles.length?tiles.map(x=>'<button class="ptile'+(x.out?' out':'')+'" onclick="addToCart(\''+x.type+'\',\''+x.id+'\')"><span class="pi">'+icon(x.ic,17)+'</span><span class="pn">'+esc(x.name)+'</span><span class="pp">'+money(x.price)+'</span><span class="pq">'+esc(x.sub)+'</span></button>').join('')
@@ -1272,13 +1282,81 @@ A.printChoose=function(){
 };
 function doPrint(fmt){
   const s=A._lastReceipt;if(!s)return;
-  const pa=$('printArea');
-  pa.className=fmt;
-  pa.innerHTML='<div dir="'+(S.lang==='ar'?'rtl':'ltr')+'">'+(fmt==='a4'?receiptA4HTML(s):receiptHTML(s))+'</div>';
+  const dir=S.lang==='ar'?'rtl':'ltr';
+  const body='<div dir="'+dir+'" class="'+fmt+'">'+(fmt==='a4'?receiptA4HTML(s):receiptHTML(s))+'</div>';
   closeModal();
-  setTimeout(()=>window.print(),120);
+  printViaWindow(body, printCSS(fmt), t('receipt')+' '+s.no, dir);
 }
 function printReceipt(){doPrint('thermal')}
+
+// Collect the print CSS for a given mode from the document's <style> so the
+// print window renders identically. Returns a CSS string.
+function printCSS(mode){
+  // Base receipt/label styles used inside print window
+  const common=`
+    *{box-sizing:border-box;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    body{margin:0;font-family:'Cairo',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;color:#000;background:#fff}
+    .rc-center{text-align:center}
+    .rc-line{border-top:1px dashed #000;margin:6px 0}
+    table{width:100%;border-collapse:collapse}
+    td{padding:2.5px 0;vertical-align:top}`;
+  if(mode==='thermal')return common+`
+    .thermal{width:74mm;margin:0 auto;font-size:12px;padding:4mm 2mm}
+    @page{margin:4mm}`;
+  if(mode==='a4')return common+`
+    .a4{width:100%;max-width:190mm;margin:0 auto;padding:16mm 14mm;font-size:13px}
+    .a4-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #222;padding-bottom:14px;margin-bottom:18px}
+    .a4-title{font-size:26px;font-weight:900;color:#222}
+    .a4-meta{text-align:end;font-size:12px;color:#555;line-height:1.7}
+    .a4-items th{background:#f4f4f8;text-align:start;padding:10px;font-size:12px;border-bottom:2px solid #ddd}
+    .a4-items td{padding:9px 10px;border-bottom:1px solid #eee}
+    .a4-tot{margin-top:18px;margin-inline-start:auto;width:52%}
+    .a4-tot tr td{padding:6px 10px}
+    .a4-tot .grand{font-size:17px;font-weight:900;border-top:2px solid #222}
+    .a4-foot{margin-top:30px;text-align:center;color:#666;font-size:12px;border-top:1px dashed #ccc;padding-top:14px}
+    @page{margin:0}`;
+  if(mode==='labels')return common+`
+    .lbl-sheet{display:flex;flex-wrap:wrap;gap:3mm;padding:4mm}
+    .lbl-card{border:1px solid #000;border-radius:2mm;width:48mm;padding:2mm;text-align:center;page-break-inside:avoid}
+    .lbl-name{font-size:12px;font-weight:800;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .lbl-bc{display:block;margin:0 auto;max-width:100%}
+    .lbl-price{font-size:14px;font-weight:900;margin-top:2px}
+    @page{margin:4mm}`;
+  return common;
+}
+
+// Open a dedicated print window. The user taps "طباعة" inside it, which ALWAYS
+// triggers the OS print dialog (with printer selection) — instead of printing
+// silently to the default printer. Works on desktop + Android + iOS.
+function printViaWindow(bodyHTML, css, title, dir){
+  const w=window.open('','_blank','width=420,height=640');
+  if(!w){
+    // Popup blocked → fallback to in-page print
+    const pa=$('printArea');pa.className='';pa.innerHTML=bodyHTML;setTimeout(()=>window.print(),120);
+    return;
+  }
+  const doc=w.document;
+  doc.open();
+  doc.write('<!doctype html><html dir="'+(dir||'rtl')+'" lang="ar"><head><meta charset="utf-8">'
+    +'<meta name="viewport" content="width=device-width,initial-scale=1">'
+    +'<title>'+esc(title||'Print')+'</title>'
+    +'<style>'+css
+    +'.__bar{position:sticky;top:0;display:flex;gap:8px;padding:12px;background:#12172a;border-bottom:1px solid #2a3050}'
+    +'.__bar button{flex:1;padding:13px;border:none;border-radius:10px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer}'
+    +'.__print{background:linear-gradient(90deg,#7c5cfc,#5b8cff);color:#fff}'
+    +'.__close{background:#1a2036;color:#a8b0d8}'
+    +'.__wrap{padding:14px;background:#e9ecf5;min-height:100vh}'
+    +'.__paper{background:#fff;margin:0 auto;box-shadow:0 6px 24px rgba(0,0,0,.15);border-radius:6px;overflow:hidden}'
+    +'@media print{.__bar{display:none!important}.__wrap{padding:0;background:#fff}.__paper{box-shadow:none;border-radius:0}}'
+    +'</style></head><body>'
+    +'<div class="__bar"><button class="__print" onclick="window.print()">🖨️ اختر الطابعة واطبع</button>'
+    +'<button class="__close" onclick="window.close()">إغلاق</button></div>'
+    +'<div class="__wrap"><div class="__paper">'+bodyHTML+'</div></div>'
+    +'</body></html>');
+  doc.close();
+  w.focus();
+}
+window.printViaWindow=printViaWindow;
 function receiptA4HTML(s){
   const st=S.settings, cur=st.currency||t('cur');
   const rows=s.items.map((i,n)=>'<tr><td>'+(n+1)+'</td><td>'+esc(i.name)+(i.imei?'<br><small style="color:#888">IMEI: '+esc(i.imei)+'</small>':'')+'</td><td>'+i.qty+'</td><td>'+fmt(i.price)+'</td><td style="text-align:end"><b>'+fmt(i.price*i.qty)+'</b></td></tr>').join('');
@@ -1300,7 +1378,84 @@ function receiptA4HTML(s){
 }
 window.doPrint=doPrint;
 
-/* ---- Invoice text builder (for sharing) ---- */
+/* ================= BARCODE LABEL GENERATOR ================= */
+// Generate a unique internal barcode number (numeric, Code128-friendly)
+async function genBarcodeNum(){
+  const seq=await DB.nextNo('BC',100000);          // BC-100001, BC-100002...
+  const n=seq.split('-')[1];
+  return String(n);                                 // pure numeric for reliable scanning
+}
+// Render a Code128 barcode into an <svg> string via JsBarcode (into a temp canvas→dataURL)
+function renderBarcodeDataURL(value,opts){
+  try{
+    const canvas=document.createElement('canvas');
+    window.JsBarcode(canvas,String(value),Object.assign({
+      format:'CODE128',width:2,height:60,displayValue:true,fontSize:14,margin:6,background:'#ffffff',lineColor:'#000000'
+    },opts||{}));
+    return canvas.toDataURL('image/png');
+  }catch(e){return null}
+}
+// Build one label's HTML (barcode + name + price)
+function labelHTML(item){
+  const st=S.settings, cur=st.currency||t('cur');
+  const url=renderBarcodeDataURL(item.barcode,{height:50,fontSize:13});
+  const priceStr=item.price!=null&&item.price!==''?fmt(item.price)+' '+cur:'';
+  return `<div class="lbl-card">
+    <div class="lbl-name">${esc(item.name||'')}</div>
+    ${url?'<img class="lbl-bc" src="'+url+'">':'<div style="color:#000">'+esc(item.barcode)+'</div>'}
+    ${priceStr?'<div class="lbl-price">'+priceStr+'</div>':''}
+  </div>`;
+}
+// Print N copies of a label for a product/device
+A.printLabel=async function(kind,id,copies){
+  const store=kind==='device'?'devices':'products';
+  const rec=await DB.get(store,id);
+  if(!rec){toast('—','err');return}
+  let barcode=rec.barcode;
+  if(!barcode){
+    // Devices: use IMEI1 if present; else generate. Products: generate.
+    if(kind==='device'&&rec.imei1)barcode=rec.imei1;
+    else barcode=await genBarcodeNum();
+    rec.barcode=barcode;await DB.put(store,rec);   // persist so scanning finds it later
+  }
+  const item={
+    barcode,
+    name: kind==='device'?(rec.brand+' '+rec.model+(rec.storage?' '+rec.storage:'')):rec.name,
+    price: rec.sell
+  };
+  A._labelItem=item;
+  openModal({title:t('printLabel'),body:
+    '<div style="text-align:center">'
+    +'<div id="lblPreview" style="display:inline-block;background:#fff;border-radius:12px;padding:10px;margin-bottom:14px;min-height:70px"></div>'
+    +'<div class="field" style="max-width:200px;margin:0 auto"><label class="lbl">'+t('printLabelCount')+'</label>'
+    +'<input class="inp" id="lblCount" type="number" min="1" max="60" value="'+(copies||1)+'" style="text-align:center"></div>'
+    +'</div>',
+    footer:'<button class="btn ghost" onclick="closeModal()">'+t('cancel')+'</button>'
+      +'<button class="btn primary" onclick="A.doLabelPrint()">'+icon('printer',16)+' '+t('printLabel')+'</button>',
+    onOpen:()=>{
+      let tries=0;
+      const draw=()=>{const p=$('lblPreview');if(!p)return;
+        if(window.JsBarcode){p.innerHTML=labelHTML(item)}
+        else if(tries++<12){setTimeout(draw,250)}          // wait for CDN
+        else{p.innerHTML=labelHTML(item)}                   // fallback (text barcode)
+      };
+      draw();
+    }});
+};
+A.doLabelPrint=function(){
+  const item=A._labelItem;if(!item)return;
+  const n=Math.max(1,Math.min(60,parseInt($('lblCount').value)||1));
+  const one=labelHTML(item);
+  const body='<div class="labels"><div class="lbl-sheet">'+Array(n).fill(one).join('')+'</div></div>';
+  closeModal();
+  printViaWindow(body, printCSS('labels'), t('printLabel'), S.lang==='ar'?'rtl':'ltr');
+};
+A.genBarcodeInto=async function(inputId){
+  const el=$(inputId);if(!el)return;
+  if(el.value.trim()){if(!await confirmDlg(el.value+' → '+t('genBarcode')+'?'))return}
+  el.value=await genBarcodeNum();
+  toast(t('barcodePrinted'));
+};
 function receiptText(s){
   const st=S.settings, L=[];
   L.push((st.storeName||'Mobile POS'));
@@ -1346,14 +1501,22 @@ A.scanBarcode=async function(onResult){
   const handle=(val)=>{
     if(!val)return;
     A.stopScan();
-    if(onResult){onResult(String(val));return}
-    const q=$('posQ');if(q)q.value=val;S.posQ=val;renderPosGrid();
-    DB.all('products').then(ps=>{
-      const m=ps.filter(p=>(p.barcode||'')===String(val));
-      if(m.length===1){addToCart('product',m[0].id);toast(m[0].name)}
-      else if(m.length===0){
-        // Unknown barcode → offer to create a product with it
-        confirmDlg(t('barcodeNotFound')).then(ok=>{if(ok)A.productForm(null,String(val))});
+    const code=String(val).trim();
+    if(onResult){onResult(code);return}
+    const q=$('posQ');if(q)q.value=code;S.posQ=code;renderPosGrid();
+    // Search BOTH products (by barcode) AND devices (by IMEI1/IMEI2/barcode)
+    Promise.all([DB.all('products'),DB.all('devices')]).then(([ps,ds])=>{
+      const prod=ps.filter(p=>(p.barcode||'')===code);
+      const dev=ds.filter(d=>(d.imei1||'')===code||(d.imei2||'')===code||(d.barcode||'')===code);
+      if(prod.length===1){addToCart('product',prod[0].id);toast(prod[0].name);return}
+      if(dev.length===1){
+        const d=dev[0];
+        if(d.status!=='available'){toast((d.brand+' '+d.model)+' — '+(d.status==='sold'?t('sold'):d.status),'warn');return}
+        addToCart('device',d.id);toast(d.brand+' '+d.model);return;
+      }
+      if(prod.length===0&&dev.length===0){
+        // Unknown code → offer to create a product with it
+        confirmDlg(t('barcodeNotFound')).then(ok=>{if(ok)A.productForm(null,code)});
       }
     });
   };
@@ -1461,7 +1624,7 @@ VIEWS.products=async function(){
       +'<td><span class="bdg gray">'+t(p.category)+'</span></td><td class="money">'+money(p.buy)+'</td><td class="money">'+money(p.sell)+'</td>'
       +'<td class="money '+(mg>=0?'pos-v':'neg-v')+'">'+money(mg)+'</td><td class="row-title">'+p.qty+'</td>'
       +'<td><span class="bdg '+st[0]+'">'+st[1]+'</span></td>'
-      +'<td style="text-align:end"><button class="iconbtn" onclick="A.productForm(\'+p.id+\')" aria-label="edit">'+icon('edit',15)+'</button><button class="iconbtn red" onclick="A.delItem(\'products\',\''+p.id+'\')" aria-label="delete">'+icon('trash',15)+'</button></td></tr>'}).join('')
+      +'<td style="text-align:end"><button class="iconbtn" onclick="A.printLabel(\'product\',\''+p.id+'\')" aria-label="label" title="'+t('printLabel')+'">'+icon('scan',15)+'</button><button class="iconbtn" onclick="A.productForm(\'+p.id+\')" aria-label="edit">'+icon('edit',15)+'</button><button class="iconbtn red" onclick="A.delItem(\'products\',\''+p.id+'\')" aria-label="delete">'+icon('trash',15)+'</button></td></tr>'}).join('')
     +'</tbody></table></div>'
   :'<div class="empty"><div class="e-ico">'+icon('box',26)+'</div><b>'+t('noData')+'</b><span>'+t('noDataSub')+'</span></div>'}
   </div>`;
@@ -1472,7 +1635,7 @@ A.productForm=async function(id,prefillBarcode){
   openModal({title:id?t('editProduct'):t('addProduct'),wide:false,body:'<div class="form-grid">'
     +F.inp('f_name',t('productName'),{val:p.name||'',req:1,full:1})
     +F.sel('f_cat',t('category'),CATS.map(c=>({v:c,l:t(c)})),p.category)
-    +'<div class="field"><label class="lbl" for="f_bar">'+t('barcode')+'</label><div style="display:flex;gap:6px"><input class="inp" id="f_bar" value="'+esc(p.barcode||'')+'" placeholder="'+t('optional')+'" style="flex:1"><button type="button" class="btn ghost" style="height:44px;padding:0 12px" onclick="A.scanBarcode(v=>{document.getElementById(\'f_bar\').value=v})">'+icon('scan',17)+'</button></div></div>'
+    +'<div class="field"><label class="lbl" for="f_bar">'+t('barcode')+'</label><div style="display:flex;gap:6px"><input class="inp" id="f_bar" value="'+esc(p.barcode||'')+'" placeholder="'+t('optional')+'" style="flex:1"><button type="button" class="btn ghost" style="height:44px;padding:0 12px" onclick="A.scanBarcode(v=>{document.getElementById(\'f_bar\').value=v})" title="'+t('scanBarcode')+'">'+icon('scan',17)+'</button><button type="button" class="btn ghost" style="height:44px;padding:0 12px" onclick="A.genBarcodeInto(\'f_bar\')" title="'+t('genBarcode')+'">'+icon('sparkles',17)+'</button></div></div>'
     +F.inp('f_buy',t('buyPrice'),{type:'number',val:p.buy??'',req:1,min:0})
     +F.inp('f_sell',t('sellPrice'),{type:'number',val:p.sell??'',req:1,min:0})
     +F.inp('f_qty',t('stockQty'),{type:'number',val:p.qty??0,min:0})
@@ -1513,7 +1676,7 @@ VIEWS.devices=async function(){
       +'<td>'+(d.battery?'<span class="bdg '+(num(d.battery)>=85?'green':num(d.battery)>=70?'amber':'red')+'">'+d.battery+'%</span>':'—')+'</td>'
       +'<td class="money">'+money(d.buy)+'</td><td class="money">'+money(d.sell)+'</td>'
       +'<td>'+(d.status==='sold'?'<span class="bdg green">'+t('sold')+'</span><br><span class="row-sub">'+fmtDate(d.soldAt)+'</span>':'<span class="bdg violet">'+t('available')+'</span>')+'</td>'
-      +'<td style="text-align:end"><button class="iconbtn" onclick="A.deviceForm(\'+d.id+\')" aria-label="edit">'+icon('edit',15)+'</button><button class="iconbtn red" onclick="A.delItem(\'devices\',\''+d.id+'\')" aria-label="delete">'+icon('trash',15)+'</button></td></tr>').join('')
+      +'<td style="text-align:end"><button class="iconbtn" onclick="A.printLabel(\'device\',\''+d.id+'\')" aria-label="label" title="'+t('printLabel')+'">'+icon('scan',15)+'</button><button class="iconbtn" onclick="A.deviceForm(\'+d.id+\')" aria-label="edit">'+icon('edit',15)+'</button><button class="iconbtn red" onclick="A.delItem(\'devices\',\''+d.id+'\')" aria-label="delete">'+icon('trash',15)+'</button></td></tr>').join('')
     +'</tbody></table></div>'
   :'<div class="empty"><div class="e-ico">'+icon('phone',26)+'</div><b>'+t('noData')+'</b><span>'+t('noDataSub')+'</span></div>'}
   </div>`;
@@ -2205,7 +2368,7 @@ Object.assign(I18N.ar,{
   invalidCode:'كود التفعيل غير صحيح',activationOk:'تم التفعيل! شكراً لدعمك.',
   contactSeller:'تواصل مع البائع',waMsg:'مرحباً، أريد تفعيل Mobile POS. معرّف تثبيتي:',
   backupBefore:'اعمل نسخة احتياطية أولاً',takeBackup:'نسخة احتياطية',
-  alreadyActivated:'مفعّل بالفعل ✓',licInfo:'الترخيص',secondDevice:'هذا جهاز ثانٍ (استخدم نفس كود الجهاز الأول)',shareInv:'مشاركة الفاتورة',scanBarcode:'مسح باركود',scanning:'وجّه الكاميرا نحو الباركود...',cameraErr:'تعذّر فتح الكاميرا',noCamera:'لا توجد كاميرا متاحة',enterManually:'إدخال يدوي',enterBarcodeManually:'أدخل رقم الباركود يدوياً:',barcodeNotFound:'الباركود غير موجود — إضافة منتج جديد؟',addNewProduct:'إضافة منتج جديد',newCustomer:'زبون جديد',idCard:'رقم بطاقة الهوية',idCardPh:'رقم البطاقة (اختياري)',quickAddCust:'إضافة زبون سريع',printThermal:'طباعة حرارية 80mm',printA4:'طباعة A4',printFormat:'اختر نوع الطباعة'
+  alreadyActivated:'مفعّل بالفعل ✓',licInfo:'الترخيص',secondDevice:'هذا جهاز ثانٍ (استخدم نفس كود الجهاز الأول)',shareInv:'مشاركة الفاتورة',scanBarcode:'مسح باركود',scanning:'وجّه الكاميرا نحو الباركود...',cameraErr:'تعذّر فتح الكاميرا',noCamera:'لا توجد كاميرا متاحة',enterManually:'إدخال يدوي',enterBarcodeManually:'أدخل رقم الباركود يدوياً:',barcodeNotFound:'الباركود غير موجود — إضافة منتج جديد؟',addNewProduct:'إضافة منتج جديد',newCustomer:'زبون جديد',idCard:'رقم بطاقة الهوية',idCardPh:'رقم البطاقة (اختياري)',quickAddCust:'إضافة زبون سريع',printThermal:'طباعة حرارية 80mm',printA4:'طباعة A4',printFormat:'اختر نوع الطباعة',genBarcode:'توليد باركود',printLabel:'طباعة ملصق',labelPreview:'معاينة الملصق',barcodePrinted:'جاهز للطباعة',genBarcodeHint:'توليد رقم باركود داخلي تلقائياً',noBarcodeYet:'لا يوجد باركود — ولّد واحداً أولاً',printLabelCount:'عدد الملصقات'
 });
 Object.assign(I18N.fr,{
   nav_sales:'Factures',salesHistory:'Historique des ventes',viewInv:'Voir la facture',reprint:'Réimprimer',refund:'Rembourser',
@@ -2221,7 +2384,7 @@ Object.assign(I18N.fr,{
   invalidCode:'Code invalide',activationOk:'Activé ! Merci de votre soutien.',
   contactSeller:'Contacter le vendeur',waMsg:'Bonjour, je veux activer Mobile POS. Mon ID :',
   backupBefore:'Faites une sauvegarde d\'abord',takeBackup:'Sauvegarde',
-  alreadyActivated:'Déjà activé ✓',licInfo:'Licence',secondDevice:'Ceci est un 2e appareil (même code que le 1er)',shareInv:'Partager la facture',scanBarcode:'Scanner code-barres',scanning:'Dirigez la caméra vers le code-barres...',cameraErr:'Impossible d\'ouvrir la caméra',noCamera:'Aucune caméra disponible',enterManually:'Saisie manuelle',enterBarcodeManually:'Entrez le code-barres :',barcodeNotFound:'Code-barres introuvable — ajouter un produit ?',addNewProduct:'Ajouter un produit',newCustomer:'Nouveau client',idCard:'N° carte d\'identité',idCardPh:'N° carte (optionnel)',quickAddCust:'Ajout rapide client',printThermal:'Impression thermique 80mm',printA4:'Impression A4',printFormat:'Choisir le type d\'impression'
+  alreadyActivated:'Déjà activé ✓',licInfo:'Licence',secondDevice:'Ceci est un 2e appareil (même code que le 1er)',shareInv:'Partager la facture',scanBarcode:'Scanner code-barres',scanning:'Dirigez la caméra vers le code-barres...',cameraErr:'Impossible d\'ouvrir la caméra',noCamera:'Aucune caméra disponible',enterManually:'Saisie manuelle',enterBarcodeManually:'Entrez le code-barres :',barcodeNotFound:'Code-barres introuvable — ajouter un produit ?',addNewProduct:'Ajouter un produit',newCustomer:'Nouveau client',idCard:'N° carte d\'identité',idCardPh:'N° carte (optionnel)',quickAddCust:'Ajout rapide client',printThermal:'Impression thermique 80mm',printA4:'Impression A4',printFormat:'Choisir le type d\'impression',genBarcode:'Générer code-barres',printLabel:'Imprimer étiquette',labelPreview:'Aperçu étiquette',barcodePrinted:'Prêt à imprimer',genBarcodeHint:'Générer un code-barres interne',noBarcodeYet:'Pas de code-barres — générez-en un',printLabelCount:'Nombre d\'étiquettes'
 });
 Object.assign(I18N.en,{
   nav_sales:'Sales',salesHistory:'Sales history',viewInv:'View invoice',reprint:'Reprint',refund:'Refund',
@@ -2237,7 +2400,7 @@ Object.assign(I18N.en,{
   invalidCode:'Invalid activation code',activationOk:'Activated! Thank you for your support.',
   contactSeller:'Contact seller',waMsg:'Hello, I want to activate Mobile POS. My Install ID:',
   backupBefore:'Take a backup first',takeBackup:'Backup',
-  alreadyActivated:'Already activated ✓',licInfo:'License',secondDevice:'This is a 2nd device (use device-1 code)',shareInv:'Share invoice',scanBarcode:'Scan barcode',scanning:'Point the camera at the barcode...',cameraErr:'Cannot open camera',noCamera:'No camera available',enterManually:'Enter manually',enterBarcodeManually:'Enter the barcode number:',barcodeNotFound:'Barcode not found — add a new product?',addNewProduct:'Add new product',newCustomer:'New customer',idCard:'ID card number',idCardPh:'ID number (optional)',quickAddCust:'Quick add customer',printThermal:'Thermal print 80mm',printA4:'A4 print',printFormat:'Choose print type'
+  alreadyActivated:'Already activated ✓',licInfo:'License',secondDevice:'This is a 2nd device (use device-1 code)',shareInv:'Share invoice',scanBarcode:'Scan barcode',scanning:'Point the camera at the barcode...',cameraErr:'Cannot open camera',noCamera:'No camera available',enterManually:'Enter manually',enterBarcodeManually:'Enter the barcode number:',barcodeNotFound:'Barcode not found — add a new product?',addNewProduct:'Add new product',newCustomer:'New customer',idCard:'ID card number',idCardPh:'ID number (optional)',quickAddCust:'Quick add customer',printThermal:'Thermal print 80mm',printA4:'A4 print',printFormat:'Choose print type',genBarcode:'Generate barcode',printLabel:'Print label',labelPreview:'Label preview',barcodePrinted:'Ready to print',genBarcodeHint:'Auto-generate an internal barcode',noBarcodeYet:'No barcode — generate one first',printLabelCount:'Number of labels'
 });
 
 /* ---- Sync i18n ---- */
@@ -2288,7 +2451,7 @@ const CONFIG={
   /* ⚠ CHANGE THESE BEFORE PUBLIC RELEASE ⚠ */
   SECRET:'MPOS-SVgIT1sGV5qNy2Cz4FvEH3LJONE9OjB',
   TRIAL_DAYS:7,
-  SELLER:{name:'ChemseEddine',phone:'+213 655970064',whatsapp:'https://wa.me/213794626625'},
+  SELLER:{name:'ChemseEddine',phone:'+213 555 000 000',whatsapp:'https://wa.me/213555000000'},
   /* ── Cloud sync (single project owned by the seller) ──
      Put YOUR NEW Supabase URL + anon key here before release.
      Leave blank ('') to disable auto-sync (app still works locally). */
@@ -2411,9 +2574,9 @@ A.showActivation=async function(closable){
       </div>
     </div>
     ${isActive?'':`
-    <div class="form-grid" style="grid-template-columns:1fr">
-      ${F.inp('actCode',t('activationCode'),{val:'',ph:t('enterCode'),full:1})}
-    </div>
+    <div class="field full"><label class="lbl" for="actCode">${t('activationCode')}</label>
+      <div style="display:flex;gap:6px"><input class="inp" id="actCode" placeholder="${t('enterCode')}" style="flex:1;font-family:ui-monospace,Menlo,monospace;letter-spacing:1px;text-align:center">
+      <button type="button" class="btn ghost" style="height:44px;padding:0 12px" onclick="A.scanBarcode(v=>{document.getElementById('actCode').value=v})" title="${t('scanBarcode')}">${icon('scan',17)}</button></div></div>
     <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);margin:8px 2px 4px;cursor:pointer">
       <input type="checkbox" id="actJoin" style="width:16px;height:16px;accent-color:var(--primary)"> ${t('secondDevice')}
     </label>
@@ -2464,7 +2627,8 @@ A.showActivationLock=async function(){
         </div>
       </div>
       <div class="field" style="margin-bottom:10px"><label class="lbl">${t('activationCode')}</label>
-        <input class="inp" id="actCodeLk" placeholder="${t('enterCode')}" style="font-family:ui-monospace,Menlo,monospace;letter-spacing:1px;text-align:center"></div>
+        <div style="display:flex;gap:6px"><input class="inp" id="actCodeLk" placeholder="${t('enterCode')}" style="flex:1;font-family:ui-monospace,Menlo,monospace;letter-spacing:1px;text-align:center">
+        <button type="button" class="btn ghost" style="height:44px;padding:0 12px" onclick="A.scanBarcode(v=>{document.getElementById('actCodeLk').value=v})" title="${t('scanBarcode')}">${icon('scan',17)}</button></div></div>
       <label style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--muted);margin:0 2px 12px;cursor:pointer">
         <input type="checkbox" id="actJoinLk" style="width:16px;height:16px;accent-color:var(--primary)"> ${t('secondDevice')}
       </label>
