@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl" data-theme="dark">
+<html lang="ar" dir="rtl" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
@@ -36,15 +36,15 @@
   --font:'Cairo','Segoe UI',Tahoma,system-ui,sans-serif;
 }
 [data-theme="light"]{
-  --bg:#f2f4fb; --bg2:#eceffa; --card:#ffffff; --card2:#f6f8fe; --card3:#eef1fc;
-  --border:#e3e8f6; --border2:#d3daf0;
-  --text:#101528; --text2:#3c445f; --muted:#69719a; --faint:#9aa2c4;
-  --primary-soft:rgba(124,92,252,.10);
-  --grad-soft:linear-gradient(135deg,rgba(124,92,252,.12),rgba(91,140,255,.07));
-  --green-soft:rgba(34,199,122,.12); --amber-soft:rgba(245,165,36,.14);
-  --red-soft:rgba(244,80,108,.10); --cyan-soft:rgba(56,189,248,.12);
-  --shadow:0 8px 24px rgba(30,40,90,.08);
-  --shadow-lg:0 24px 60px rgba(30,40,90,.14);
+  --bg:#f5f7fb; --bg2:#eef1f7; --card:#ffffff; --card2:#f8fafc; --card3:#f1f4f9;
+  --border:#e8ecf3; --border2:#dde3ed;
+  --text:#0f1729; --text2:#41496a; --muted:#6b7594; --faint:#a3abc4;
+  --primary-soft:rgba(124,92,252,.09);
+  --grad-soft:linear-gradient(135deg,rgba(124,92,252,.10),rgba(91,140,255,.06));
+  --green-soft:rgba(34,199,122,.11); --amber-soft:rgba(245,165,36,.13);
+  --red-soft:rgba(244,80,108,.09); --cyan-soft:rgba(56,189,248,.11);
+  --shadow:0 4px 16px rgba(20,30,70,.06);
+  --shadow-lg:0 16px 48px rgba(20,30,70,.10);
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -207,16 +207,17 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
 .page-s{font-size:12.5px;color:var(--muted);margin-top:2px}
 
 /* ============ POS ============ */
-.pos{display:grid;grid-template-columns:1fr 392px;gap:16px;align-items:start}
-.ptiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:11px}
-.ptile{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px;text-align:start;transition:all .16s;display:flex;flex-direction:column;gap:7px;min-height:118px}
-.ptile:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:0 10px 24px rgba(124,92,252,.18)}
-.ptile:active{transform:scale(.98)}
-.ptile .pi{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:var(--grad-soft);color:var(--violet)}
-.ptile .pn{font-weight:800;font-size:12.5px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.6em}
-.ptile .pp{font-weight:900;font-size:13.5px;color:var(--primary2)}
-.ptile .pq{font-size:10.5px;font-weight:700;color:var(--muted)}
-.ptile.out{opacity:.42;pointer-events:none}
+.pos{display:grid;grid-template-columns:1fr 372px;gap:14px;align-items:start}
+.ptiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:9px}
+.ptile{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:11px 10px;text-align:start;transition:all .14s;display:flex;flex-direction:column;gap:5px;min-height:96px;position:relative}
+.ptile:hover{border-color:var(--primary);background:var(--card2)}
+.ptile:active{transform:scale(.97)}
+.ptile .pi{width:30px;height:30px;border-radius:9px;background:var(--primary-soft);color:var(--primary2);display:grid;place-items:center;margin-bottom:1px}
+.ptile .pn{font-size:12px;font-weight:700;color:var(--text);line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;flex:1}
+.ptile .pp{font-size:13px;font-weight:800;color:var(--primary2)}
+.ptile .pq{font-size:10px;color:var(--muted)}
+.ptile.out{opacity:.5}
+.ptile.out::after{content:'';position:absolute;inset:0;border-radius:13px;background:repeating-linear-gradient(45deg,transparent,transparent 6px,rgba(244,80,108,.06) 6px,rgba(244,80,108,.06) 12px)}
 .cart{position:sticky;top:0;display:flex;flex-direction:column;max-height:calc(100vh - 130px);padding:0;overflow:hidden}
 .cart-head{display:flex;align-items:center;justify-content:space-between;padding:15px 16px 12px;border-bottom:1px solid var(--border);flex-shrink:0}
 .cart-title{font-weight:800;font-size:15px;display:flex;align-items:center;gap:8px;color:var(--text)}
@@ -240,7 +241,9 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
 .cart-tot.big{font-size:18px;font-weight:900;color:var(--text);border-top:1px dashed var(--border2);margin-top:8px;padding-top:12px}
 .cart-tot.big .money{color:var(--primary2)}
 .pay-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:12px 0}
+.pay-grid.pay-2{grid-template-columns:1fr 1fr;gap:10px}
 .pay-btn{display:flex;flex-direction:column;align-items:center;gap:5px;padding:10px 4px;border-radius:11px;border:1px solid var(--border);background:var(--card);font-size:11px;font-weight:800;color:var(--muted);transition:all .15s;min-height:58px;justify-content:center}
+.pay-grid.pay-2 .pay-btn{flex-direction:row;gap:8px;min-height:52px;font-size:13.5px}
 .pay-btn:hover{border-color:var(--border2);color:var(--text)}
 .pay-btn.active{border-color:var(--primary);background:var(--primary-soft);color:var(--primary2)}
 
@@ -336,7 +339,8 @@ table.tbl{width:100%;border-collapse:collapse;font-size:13px;min-width:560px}
 .lbl-price{font-size:14px;font-weight:900;color:#000;margin-top:2px}
 
 /* ============ RESPONSIVE ============ */
-@media(max-width:1180px){.pos{grid-template-columns:1fr;display:flex;flex-direction:column}.cart{position:static;order:-1;max-height:none}.pos>div:first-child{order:1}.cart-items{max-height:240px}}
+@media(max-width:1180px){.pos{grid-template-columns:1fr;display:flex;flex-direction:column;gap:14px}.cart{position:static;order:2;max-height:none}.pos>div:first-child{order:1}.cart-items{max-height:none}.ptiles{grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}}
+@media(max-width:420px){.ptiles{grid-template-columns:repeat(3,1fr);gap:7px}.ptile{min-height:90px;padding:9px 8px}.ptile .pn{font-size:11px}}
 @media(max-width:860px){
   .sidebar{position:fixed;inset-block:0;inset-inline-start:0;transform:translateX(100%);box-shadow:var(--shadow-lg)}
   [dir="ltr"] .sidebar{transform:translateX(-100%)}
@@ -813,12 +817,13 @@ const SYNC={
 window.SYNC=SYNC;
 
 /* ================= STATE & HELPERS ================= */
-const S={view:'dashboard',lang:'ar',theme:'dark',settings:{},cart:[],cartCustomer:null,cartDiscount:0,cartMethod:'cash',
+const S={view:'dashboard',lang:'ar',theme:'light',settings:{},cart:[],cartCustomer:null,cartDiscount:0,cartMethod:'cash',
   posCat:'all',posQ:'',filters:{},pinBuf:'',pinMode:'verify',pinTmp:''};
 const $=id=>document.getElementById(id);
 const t=k=>(I18N[S.lang]&&I18N[S.lang][k])||I18N.ar[k]||k;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const num=v=>{const n=parseFloat(v);return isFinite(n)?n:0};
+const r2=n=>Math.round((num(n)+Number.EPSILON)*100)/100;  // round money to 2 decimals (kills float noise)
 const fmt=n=>Math.round(num(n)).toLocaleString('en-US');
 const money=n=>fmt(n)+' '+(S.settings.currency||t('cur'));
 const pad=n=>String(n).padStart(2,'0');
@@ -1024,7 +1029,7 @@ VIEWS.dashboard=async function(){
   const days=[];for(let i=13;i>=0;i--){const d=daysAgo(i);const k=dkey(d);days.push({k,l:pad(d.getDate())+'/'+pad(d.getMonth()+1),v:sum(sales.filter(s=>s.dateKey===k),'total')})}
   // payment donut (month)
   const mSales=sales.filter(s=>(s.dateKey||'').startsWith(month));
-  const byPay=['cash','card','transfer','credit'].map(m=>({m,l:payLbl(m),v:sum(mSales.filter(s=>s.method===m),'total'),
+  const byPay=['cash','credit'].map(m=>({m,l:payLbl(m),v:sum(mSales.filter(s=>s.method===m),'total'),
     c:{cash:'#22c77a',card:'#38bdf8',transfer:'#7c5cfc',credit:'#f5a524'}[m]}));
   const payTotal=byPay.reduce((a,p)=>a+p.v,0);
   // latest sales
@@ -1122,13 +1127,13 @@ async function renderPosGrid(){
   let tiles=[];
   if(S.posCat!=='cat_devices'){
     tiles=prods.filter(p=>(S.posCat==='all'||p.category===S.posCat)&&(!q||p.name.toLowerCase().includes(q)||(p.barcode||'').toLowerCase().includes(q)))
-      .map(p=>({type:'product',id:p.id,name:p.name,price:p.sell,sub:t('stock')+': '+p.qty,out:num(p.qty)<=0,ic:'box'}));
+      .map(p=>({type:'product',id:p.id,name:p.name,price:p.sell,sub:t('stock')+': '+p.qty,out:num(p.qty)<=0,ic:'box',image:p.image||''}));
   }
   if(S.posCat==='all'||S.posCat==='cat_devices'){
     tiles=tiles.concat(devs.filter(d=>d.status==='available'&&(!q||(d.brand+' '+d.model).toLowerCase().includes(q)||(d.imei1||'').includes(q)||(d.imei2||'').includes(q)||(d.barcode||'').includes(q)))
-      .map(d=>({type:'device',id:d.id,name:d.brand+' '+d.model+(d.storage?' '+d.storage:''),price:d.sell,sub:'IMEI '+(d.imei1||'').slice(-6),out:false,ic:'phone'})));
+      .map(d=>({type:'device',id:d.id,name:d.brand+' '+d.model+(d.storage?' '+d.storage:''),price:d.sell,sub:'IMEI '+(d.imei1||'').slice(-6),out:false,ic:'phone',image:d.image||''})));
   }
-  el.innerHTML=tiles.length?tiles.map(x=>'<button class="ptile'+(x.out?' out':'')+'" onclick="addToCart(\''+x.type+'\',\''+x.id+'\')"><span class="pi">'+icon(x.ic,17)+'</span><span class="pn">'+esc(x.name)+'</span><span class="pp">'+money(x.price)+'</span><span class="pq">'+esc(x.sub)+'</span></button>').join('')
+  el.innerHTML=tiles.length?tiles.map(x=>'<button class="ptile'+(x.out?' out':'')+'" onclick="addToCart(\''+x.type+'\',\''+x.id+'\')">'+(x.image?'<img class="ptn" src="'+x.image+'" alt="">':'<span class="pi">'+icon(x.ic,17)+'</span>')+'<span class="pn">'+esc(x.name)+'</span><span class="pp">'+money(x.price)+'</span><span class="pq">'+esc(x.sub)+'</span></button>').join('')
    :'<div class="empty" style="grid-column:1/-1"><div class="e-ico">'+icon('search',24)+'</div><b>'+t('noData')+'</b><span>'+t('noDataSub')+'</span></div>';
 }
 async function addToCart(type,id){
@@ -1155,9 +1160,10 @@ function cartQty(key,d){
   renderCart();
 }
 function cartTotals(){
-  const sub=S.cart.reduce((a,c)=>a+c.price*c.qty,0);
-  const disc=Math.min(num(S.cartDiscount),sub);
-  return{sub,disc,total:sub-disc,cost:S.cart.reduce((a,c)=>a+c.buy*c.qty,0)};
+  const sub=r2(S.cart.reduce((a,c)=>a+num(c.price)*num(c.qty),0));
+  const disc=r2(Math.min(num(S.cartDiscount),sub));
+  const cost=r2(S.cart.reduce((a,c)=>a+num(c.buy)*num(c.qty),0));
+  return{sub,disc,total:r2(sub-disc),cost};
 }
 function renderCart(){
   const el=$('cartPanel');if(!el)return;
@@ -1192,7 +1198,7 @@ function renderCart(){
       <div class="cart-tot" style="align-items:center"><span>${t('discount')}</span>
         <input class="inp cart-disc" type="number" min="0" value="${disc||''}" placeholder="0" oninput="S.cartDiscount=this.value;refreshCartTotals()"></div>
       <div class="cart-tot big"><span>${t('grandTotal')}</span><b class="money" id="cartGrand">${money(total)}</b></div>
-      <div class="pay-grid">${['cash','card','transfer','credit'].map(m=>'<button class="pay-btn'+(S.cartMethod===m?' active':'')+'" onclick="setPayMethod(\''+m+'\')">'+icon(PAY_META[m].ic,18)+'<span>'+payLbl(m)+'</span></button>').join('')}</div>
+      <div class="pay-grid pay-2">${['cash','credit'].map(m=>'<button class="pay-btn'+(S.cartMethod===m?' active':'')+'" onclick="setPayMethod(\''+m+'\')">'+icon(PAY_META[m].ic,18)+'<span>'+payLbl(m)+'</span></button>').join('')}</div>
       <div class="cart-tot" style="align-items:center"><span>${t('paid')}</span>
         <input class="inp cart-paid" type="number" min="0" id="cartPaidInp" value="${paid}" oninput="S.cartPaid=this.value;refreshCartTotals()"></div>
       <div class="cart-tot"><span>${t('due')}</span><b class="money ${due>0?'neg-v':''}" id="cartDue">${money(due)}</b></div>
@@ -1213,13 +1219,37 @@ async function completeSale(){
   const paidRaw=S.cartPaid!==undefined&&S.cartPaid!==null&&S.cartPaid!==''?num(S.cartPaid):total;
   const paid=Math.min(paidRaw,total), due=total-paid;
   if((due>0||S.cartMethod==='credit')&&!S.cartCustomer){toast(t('needCustomer'),'err');return}
+  // Confirmation summary before executing the sale
+  const count=S.cart.reduce((a,c)=>a+c.qty,0);
+  let custName=t('walkin');
+  if(S.cartCustomer){const c=await DB.get('customers',S.cartCustomer);if(c)custName=c.name}
+  const cur=S.settings.currency||t('cur');
+  const body='<div class="confirm-sale">'
+    +'<div class="cs-total"><span>'+t('grandTotal')+'</span><b>'+money(total)+'</b></div>'
+    +'<div class="cs-rows">'
+    +'<div class="cs-row"><span>'+t('itemsN')+'</span><b>'+count+'</b></div>'
+    +'<div class="cs-row"><span>'+t('method')+'</span><b>'+payLbl(S.cartMethod)+'</b></div>'
+    +'<div class="cs-row"><span>'+t('client')+'</span><b>'+esc(custName)+'</b></div>'
+    +'<div class="cs-row"><span>'+t('paid')+'</span><b>'+money(paid)+'</b></div>'
+    +(due>0?'<div class="cs-row due"><span>'+t('due')+'</span><b>'+money(due)+'</b></div>':'')
+    +'</div></div>';
+  openModal({title:t('confirmSaleTitle'),body,
+    footer:'<button class="btn ghost" onclick="closeModal()">'+t('cancel')+'</button>'
+      +'<button class="btn primary" id="confirmSaleBtn" style="min-width:150px">'+icon('check',18)+' '+t('confirmSale')+'</button>',
+    onOpen:()=>{$('confirmSaleBtn').onclick=()=>{closeModal();_doCompleteSale()}}});
+}
+async function _doCompleteSale(){
+  if(!S.cart.length)return;
+  const {sub,disc,total,cost}=cartTotals();
+  const paidRaw=S.cartPaid!==undefined&&S.cartPaid!==null&&S.cartPaid!==''?num(S.cartPaid):total;
+  const paid=r2(Math.min(paidRaw,total)), due=r2(total-paid);
   const no=await DB.nextNo('INV',10020);
   let custName='',custPhone='',custIdCard='';
   if(S.cartCustomer){const c=await DB.get('customers',S.cartCustomer);if(c){custName=c.name;custPhone=c.phone||'';custIdCard=c.idCard||'';
-    c.debt=num(c.debt)+due;c.totalSpent=num(c.totalSpent)+total;c.invCount=num(c.invCount)+1;await DB.put('customers',c)}}
+    c.debt=r2(num(c.debt)+due);c.totalSpent=r2(num(c.totalSpent)+total);c.invCount=num(c.invCount)+1;await DB.put('customers',c)}}
   const sale={no,dateKey:dkey(),createdAt:nowISO(),customerId:S.cartCustomer||null,customerName:custName,customerPhone:custPhone,customerIdCard:custIdCard,
     items:S.cart.map(c=>({type:c.type,refId:c.refId,name:c.name,price:c.price,buy:c.buy,qty:c.qty,imei:c.imei||null})),
-    subtotal:sub,discount:disc,total,cost,profit:total-cost,method:S.cartMethod,paid,due};
+    subtotal:sub,discount:disc,total,cost,profit:r2(total-cost),method:S.cartMethod,paid,due};
   await DB.add('sales',sale);
   for(const c of S.cart){
     if(c.type==='product'){const p=await DB.get('products',c.refId);if(p){p.qty=Math.max(0,num(p.qty)-c.qty);await DB.put('products',p)}}
@@ -1275,7 +1305,8 @@ A.printChoose=function(){
   const s=A._lastReceipt;if(!s)return;
   openModal({title:t('printFormat'),body:
     '<div style="display:flex;flex-direction:column;gap:10px">'
-    +'<button class="btn ghost block" style="height:52px;justify-content:flex-start;gap:12px;padding:0 18px" onclick="doPrint(\'thermal\')">'+icon('receipt',20)+' <div style="text-align:start"><b>'+t('printThermal')+'</b></div></button>'
+    +'<button class="btn ghost block" style="height:52px;justify-content:flex-start;gap:12px;padding:0 18px" onclick="doPrint(\'thermal\')">'+icon('receipt',20)+' <div style="text-align:start"><b>'+t('printThermal')+'</b><br><small style="color:var(--muted)">80mm</small></div></button>'
+    +'<button class="btn ghost block" style="height:52px;justify-content:flex-start;gap:12px;padding:0 18px" onclick="doPrint(\'thermal58\')">'+icon('receipt',20)+' <div style="text-align:start"><b>'+t('printThermal58')+'</b><br><small style="color:var(--muted)">58mm</small></div></button>'
     +'<button class="btn ghost block" style="height:52px;justify-content:flex-start;gap:12px;padding:0 18px" onclick="doPrint(\'a4\')">'+icon('file',20)+' <div style="text-align:start"><b>'+t('printA4')+'</b></div></button>'
     +'</div>',
     footer:'<button class="btn ghost" onclick="closeModal()">'+t('cancel')+'</button>'});
@@ -1283,11 +1314,14 @@ A.printChoose=function(){
 function doPrint(fmt){
   const s=A._lastReceipt;if(!s)return;
   const dir=S.lang==='ar'?'rtl':'ltr';
-  const body='<div dir="'+dir+'" class="'+fmt+'">'+(fmt==='a4'?receiptA4HTML(s):receiptHTML(s))+'</div>';
+  // thermal + thermal58 share the .thermal markup class; CSS differs by mode
+  const cls=fmt==='a4'?'a4':'thermal';
+  const body='<div dir="'+dir+'" class="'+cls+'">'+(fmt==='a4'?receiptA4HTML(s):receiptHTML(s))+'</div>';
   closeModal();
+  DB.kvSet('printFmt',fmt);   // remember trader's preferred format
   printViaWindow(body, printCSS(fmt), t('receipt')+' '+s.no, dir);
 }
-function printReceipt(){doPrint('thermal')}
+function printReceipt(){DB.kvGet('printFmt').then(f=>doPrint(f&&f!=='a4'?f:'thermal'))}
 
 // Collect the print CSS for a given mode from the document's <style> so the
 // print window renders identically. Returns a CSS string.
@@ -1301,8 +1335,14 @@ function printCSS(mode){
     table{width:100%;border-collapse:collapse}
     td{padding:2.5px 0;vertical-align:top}`;
   if(mode==='thermal')return common+`
-    .thermal{width:74mm;margin:0 auto;font-size:12px;padding:4mm 2mm}
-    @page{margin:4mm}`;
+    .thermal{width:72mm;margin:0 auto;font-size:12px;padding:2mm 1mm}
+    @page{size:80mm auto;margin:2mm}
+    @media print{body{width:76mm}}`;
+  if(mode==='thermal58')return common+`
+    .thermal{width:50mm;margin:0 auto;font-size:10.5px;padding:1mm}
+    .thermal table td{padding:2px 0}
+    @page{size:58mm auto;margin:1.5mm}
+    @media print{body{width:55mm}}`;
   if(mode==='a4')return common+`
     .a4{width:100%;max-width:190mm;margin:0 auto;padding:16mm 14mm;font-size:13px}
     .a4-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #222;padding-bottom:14px;margin-bottom:18px}
@@ -1616,23 +1656,34 @@ VIEWS.products=async function(){
     <select class="sel" style="width:auto;min-width:150px" onchange="S.filters.cat=this.value;A.render()">
       <option value="all">${t('all')}</option>${CATS.map(c=>'<option value="'+c+'"'+(cat===c?' selected':'')+'>'+t(c)+'</option>').join('')}</select>
   </div>
-  <div class="card" style="padding:8px 14px">
-  ${list.length?'<div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+t('productName')+'</th><th>'+t('category')+'</th><th>'+t('buyPrice')+'</th><th>'+t('sellPrice')+'</th><th>'+t('margin')+'</th><th>'+t('stock')+'</th><th>'+t('status')+'</th><th></th></tr></thead><tbody>'
+  ${list.length?'<div class="itemlist">'
     +list.map(p=>{const st=num(p.qty)<=0?['red',t('stOut')]:num(p.qty)<=num(p.minQty)?['amber',t('stLow')]:['green',t('stOk')];
       const mg=num(p.sell)-num(p.buy);
-      return '<tr><td><span class="row-title">'+esc(p.name)+'</span>'+(p.barcode?'<br><span class="row-sub">'+esc(p.barcode)+'</span>':'')+'</td>'
-      +'<td><span class="bdg gray">'+t(p.category)+'</span></td><td class="money">'+money(p.buy)+'</td><td class="money">'+money(p.sell)+'</td>'
-      +'<td class="money '+(mg>=0?'pos-v':'neg-v')+'">'+money(mg)+'</td><td class="row-title">'+p.qty+'</td>'
-      +'<td><span class="bdg '+st[0]+'">'+st[1]+'</span></td>'
-      +'<td style="text-align:end"><button class="iconbtn" onclick="A.printLabel(\'product\',\''+p.id+'\')" aria-label="label" title="'+t('printLabel')+'">'+icon('scan',15)+'</button><button class="iconbtn" onclick="A.productForm(\'+p.id+\')" aria-label="edit">'+icon('edit',15)+'</button><button class="iconbtn red" onclick="A.delItem(\'products\',\''+p.id+'\')" aria-label="delete">'+icon('trash',15)+'</button></td></tr>'}).join('')
-    +'</tbody></table></div>'
-  :'<div class="empty"><div class="e-ico">'+icon('box',26)+'</div><b>'+t('noData')+'</b><span>'+t('noDataSub')+'</span></div>'}
-  </div>`;
+      return '<div class="ilrow" onclick="A.productForm(\''+p.id+'\')">'
+        +(p.image?'<img class="il-thumb" src="'+p.image+'" alt="">':'')
+        +'<div class="il-main"><div class="il-name">'+esc(p.name)+'</div>'
+        +'<div class="il-sub"><span class="bdg gray">'+t(p.category)+'</span>'+(p.barcode?' <span class="il-bc">'+esc(p.barcode)+'</span>':'')+'</div></div>'
+        +'<div class="il-right"><div class="il-price">'+money(p.sell)+'</div>'
+        +'<div class="il-stock"><span class="bdg '+st[0]+'">'+p.qty+' · '+st[1]+'</span></div></div>'
+        +'<div class="il-actions" onclick="event.stopPropagation()">'
+        +'<button class="iconbtn" onclick="A.printLabel(\'product\',\''+p.id+'\')" title="'+t('printLabel')+'">'+icon('scan',15)+'</button>'
+        +'<button class="iconbtn red" onclick="A.delItem(\'products\',\''+p.id+'\')">'+icon('trash',15)+'</button></div>'
+        +'</div>'}).join('')
+    +'</div>'
+  :'<div class="card"><div class="empty"><div class="e-ico">'+icon('box',26)+'</div><b>'+t('noData')+'</b><span>'+t('noDataSub')+'</span></div></div>'}`;
 };
 A.productForm=async function(id,prefillBarcode){
   const p=id?await DB.get('products',id):{category:'cat_acc',qty:0,minQty:3};
   if(prefillBarcode&&!id)p.barcode=prefillBarcode;
   openModal({title:id?t('editProduct'):t('addProduct'),wide:false,body:'<div class="form-grid">'
+    +'<div class="field full"><label class="lbl">'+t('prodImage')+'</label>'
+      +'<div class="img-picker" id="imgPicker" onclick="document.getElementById(\'f_img_file\').click()">'
+      +(p.image?'<img id="imgPreview" src="'+p.image+'">':'<div id="imgPlaceholder" class="img-ph">'+icon('camera',26)+'<span>'+t('addPhoto')+'</span></div>')
+      +'</div>'
+      +'<input type="file" id="f_img_file" accept="image/*" style="display:none" onchange="A._pickProductImage(this)">'
+      +'<input type="hidden" id="f_img" value="'+(p.image||'')+'">'
+      +(p.image?'<button type="button" class="btn ghost sm" style="margin-top:6px" onclick="A._clearProductImage()">'+t('removePhoto')+'</button>':'')
+      +'</div>'
     +F.inp('f_name',t('productName'),{val:p.name||'',req:1,full:1})
     +F.sel('f_cat',t('category'),CATS.map(c=>({v:c,l:t(c)})),p.category)
     +'<div class="field"><label class="lbl" for="f_bar">'+t('barcode')+'</label><div style="display:flex;gap:6px"><input class="inp" id="f_bar" value="'+esc(p.barcode||'')+'" placeholder="'+t('optional')+'" style="flex:1"><button type="button" class="btn ghost" style="height:44px;padding:0 12px" onclick="A.scanBarcode(v=>{document.getElementById(\'f_bar\').value=v})" title="'+t('scanBarcode')+'">'+icon('scan',17)+'</button><button type="button" class="btn ghost" style="height:44px;padding:0 12px" onclick="A.genBarcodeInto(\'f_bar\')" title="'+t('genBarcode')+'">'+icon('sparkles',17)+'</button></div></div>'
@@ -1643,10 +1694,33 @@ A.productForm=async function(id,prefillBarcode){
     +'</div>',footer:crudFooter(),
     onOpen:()=>{$('crudSave').onclick=async()=>{
       if(!F.v('f_name')){toast(t('required'),'err');return}
-      const o={...p,name:F.v('f_name'),category:F.v('f_cat'),barcode:F.v('f_bar'),buy:F.n('f_buy'),sell:F.n('f_sell'),qty:F.n('f_qty'),minQty:F.n('f_min')};
+      const o={...p,name:F.v('f_name'),category:F.v('f_cat'),barcode:F.v('f_bar'),image:F.v('f_img')||'',buy:F.n('f_buy'),sell:F.n('f_sell'),qty:F.n('f_qty'),minQty:F.n('f_min')};
       if(!id){o.createdAt=nowISO();await DB.add('products',o)}else await DB.put('products',o);
       closeModal();toast(t('saved'));A.render();
     }}});
+};
+// Compress an image file to a small base64 data-URL (max ~400px, JPEG 0.7)
+A._pickProductImage=function(inp){
+  const file=inp.files&&inp.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const max=400,scale=Math.min(1,max/Math.max(img.width,img.height));
+      const w=Math.round(img.width*scale),h=Math.round(img.height*scale);
+      const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+      cv.getContext('2d').drawImage(img,0,0,w,h);
+      const data=cv.toDataURL('image/jpeg',0.7);
+      $('f_img').value=data;
+      const pk=$('imgPicker');if(pk)pk.innerHTML='<img id="imgPreview" src="'+data+'">';
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+};
+A._clearProductImage=function(){
+  $('f_img').value='';
+  const pk=$('imgPicker');if(pk)pk.innerHTML='<div class="img-ph">'+icon('camera',26)+'<span>'+t('addPhoto')+'</span></div>';
 };
 A.delItem=async function(store,id){
   if(!await confirmDlg(t('delConfirm')))return;
@@ -1668,18 +1742,18 @@ VIEWS.devices=async function(){
     <div class="searchbox"><input class="inp" placeholder="IMEI / ${t('model')}" value="${esc(S.filters.q||'')}" oninput="S.filters.q=this.value;A.render()"><span style="position:absolute;inset-inline-start:12px;top:50%;transform:translateY(-50%);color:var(--faint)">${icon('search',16)}</span></div>
     <div class="seg">${[['available',t('available')],['sold',t('sold')],['all',t('all')]].map(x=>'<button class="'+(st===x[0]?'active':'')+'" onclick="S.filters.st=\''+x[0]+'\';A.render()">'+x[1]+'</button>').join('')}</div>
   </div>
-  <div class="card" style="padding:8px 14px">
-  ${list.length?'<div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+t('device')+'</th><th>IMEI</th><th>'+t('condition')+'</th><th>'+t('battery')+'</th><th>'+t('buyPrice')+'</th><th>'+t('sellPrice')+'</th><th>'+t('status')+'</th><th></th></tr></thead><tbody>'
-    +list.map(d=>'<tr><td><span class="row-title">'+esc(d.brand+' '+d.model)+'</span><br><span class="row-sub">'+esc([d.storage,d.ram,d.color].filter(Boolean).join(' · '))+'</span></td>'
-      +'<td><span class="row-sub" style="font-variant-numeric:tabular-nums">'+esc(d.imei1||'—')+(d.imei2?'<br>'+esc(d.imei2):'')+'</span></td>'
-      +'<td><span class="bdg '+(d.condition==='new'?'blue':'gray')+'">'+(d.condition==='new'?t('condNew'):t('condUsed'))+'</span></td>'
-      +'<td>'+(d.battery?'<span class="bdg '+(num(d.battery)>=85?'green':num(d.battery)>=70?'amber':'red')+'">'+d.battery+'%</span>':'—')+'</td>'
-      +'<td class="money">'+money(d.buy)+'</td><td class="money">'+money(d.sell)+'</td>'
-      +'<td>'+(d.status==='sold'?'<span class="bdg green">'+t('sold')+'</span><br><span class="row-sub">'+fmtDate(d.soldAt)+'</span>':'<span class="bdg violet">'+t('available')+'</span>')+'</td>'
-      +'<td style="text-align:end"><button class="iconbtn" onclick="A.printLabel(\'device\',\''+d.id+'\')" aria-label="label" title="'+t('printLabel')+'">'+icon('scan',15)+'</button><button class="iconbtn" onclick="A.deviceForm(\'+d.id+\')" aria-label="edit">'+icon('edit',15)+'</button><button class="iconbtn red" onclick="A.delItem(\'devices\',\''+d.id+'\')" aria-label="delete">'+icon('trash',15)+'</button></td></tr>').join('')
-    +'</tbody></table></div>'
-  :'<div class="empty"><div class="e-ico">'+icon('phone',26)+'</div><b>'+t('noData')+'</b><span>'+t('noDataSub')+'</span></div>'}
-  </div>`;
+  ${list.length?'<div class="itemlist">'
+    +list.map(d=>{const statusBadge=d.status==='sold'?'<span class="bdg green">'+t('sold')+'</span>':'<span class="bdg violet">'+t('available')+'</span>';
+      return '<div class="ilrow" onclick="A.deviceForm(\''+d.id+'\')">'
+        +'<div class="il-main"><div class="il-name">'+esc(d.brand+' '+d.model)+'</div>'
+        +'<div class="il-sub"><span class="il-bc">IMEI '+esc((d.imei1||'—').slice(-8))+'</span>'+(d.storage?' <span class="bdg gray">'+esc(d.storage)+'</span>':'')+(d.battery?' <span class="bdg '+(num(d.battery)>=85?'green':num(d.battery)>=70?'amber':'red')+'">'+d.battery+'%</span>':'')+'</div></div>'
+        +'<div class="il-right"><div class="il-price">'+money(d.sell)+'</div><div>'+statusBadge+'</div></div>'
+        +'<div class="il-actions" onclick="event.stopPropagation()">'
+        +'<button class="iconbtn" onclick="A.printLabel(\'device\',\''+d.id+'\')" title="'+t('printLabel')+'">'+icon('scan',15)+'</button>'
+        +'<button class="iconbtn red" onclick="A.delItem(\'devices\',\''+d.id+'\')">'+icon('trash',15)+'</button></div>'
+        +'</div>'}).join('')
+    +'</div>'
+  :'<div class="card"><div class="empty"><div class="e-ico">'+icon('phone',26)+'</div><b>'+t('noData')+'</b><span>'+t('noDataSub')+'</span></div></div>'}`;
 };
 A.deviceForm=async function(id){
   const d=id?await DB.get('devices',id):{condition:'new',status:'available',warranty:12};
@@ -1687,8 +1761,8 @@ A.deviceForm=async function(id){
   openModal({title:id?t('editDevice'):t('addDevice'),wide:true,body:'<div class="form-grid">'
     +F.inp('f_brand',t('brand'),{val:d.brand||'',req:1,ph:'Apple, Samsung...'})
     +F.inp('f_model',t('model'),{val:d.model||'',req:1,ph:'iPhone 14 Pro'})
-    +F.inp('f_i1','IMEI 1',{val:d.imei1||'',req:1})
-    +F.inp('f_i2','IMEI 2',{val:d.imei2||'',ph:t('optional')})
+    +'<div class="field"><label class="lbl" for="f_i1">IMEI 1</label><div style="display:flex;gap:6px"><input class="inp" id="f_i1" value="'+esc(d.imei1||'')+'" style="flex:1;font-variant-numeric:tabular-nums"><button type="button" class="btn ghost" style="height:44px;padding:0 12px" onclick="A.scanBarcode(v=>{document.getElementById(\'f_i1\').value=v})" title="'+t('scanBarcode')+'">'+icon('scan',17)+'</button></div></div>'
+    +'<div class="field"><label class="lbl" for="f_i2">IMEI 2</label><div style="display:flex;gap:6px"><input class="inp" id="f_i2" value="'+esc(d.imei2||'')+'" placeholder="'+t('optional')+'" style="flex:1;font-variant-numeric:tabular-nums"><button type="button" class="btn ghost" style="height:44px;padding:0 12px" onclick="A.scanBarcode(v=>{document.getElementById(\'f_i2\').value=v})" title="'+t('scanBarcode')+'">'+icon('scan',17)+'</button></div></div>'
     +F.inp('f_sto',t('storage'),{val:d.storage||'',ph:'128GB'})
     +F.inp('f_ram',t('ram'),{val:d.ram||'',ph:'8GB'})
     +F.inp('f_bat',t('battery')+' %',{type:'number',val:d.battery??'',min:0})
@@ -2244,7 +2318,7 @@ async function seedDemo(){
   const custIds=[];for(const c of custs)custIds.push(await DB.add('customers',c));
   // 14 days of sales
   const now=new Date();
-  const methods=['cash','cash','cash','card','transfer','credit'];
+  const methods=['cash','cash','cash','cash','credit','credit'];
   let no=10020;
   for(let d=13;d>=0;d--){
     const date=new Date(now);date.setDate(date.getDate()-d);
@@ -2368,7 +2442,7 @@ Object.assign(I18N.ar,{
   invalidCode:'كود التفعيل غير صحيح',activationOk:'تم التفعيل! شكراً لدعمك.',
   contactSeller:'تواصل مع البائع',waMsg:'مرحباً، أريد تفعيل Mobile POS. معرّف تثبيتي:',
   backupBefore:'اعمل نسخة احتياطية أولاً',takeBackup:'نسخة احتياطية',
-  alreadyActivated:'مفعّل بالفعل ✓',licInfo:'الترخيص',secondDevice:'هذا جهاز ثانٍ (استخدم نفس كود الجهاز الأول)',shareInv:'مشاركة الفاتورة',scanBarcode:'مسح باركود',scanning:'وجّه الكاميرا نحو الباركود...',cameraErr:'تعذّر فتح الكاميرا',noCamera:'لا توجد كاميرا متاحة',enterManually:'إدخال يدوي',enterBarcodeManually:'أدخل رقم الباركود يدوياً:',barcodeNotFound:'الباركود غير موجود — إضافة منتج جديد؟',addNewProduct:'إضافة منتج جديد',newCustomer:'زبون جديد',idCard:'رقم بطاقة الهوية',idCardPh:'رقم البطاقة (اختياري)',quickAddCust:'إضافة زبون سريع',printThermal:'طباعة حرارية 80mm',printA4:'طباعة A4',printFormat:'اختر نوع الطباعة',genBarcode:'توليد باركود',printLabel:'طباعة ملصق',labelPreview:'معاينة الملصق',barcodePrinted:'جاهز للطباعة',genBarcodeHint:'توليد رقم باركود داخلي تلقائياً',noBarcodeYet:'لا يوجد باركود — ولّد واحداً أولاً',printLabelCount:'عدد الملصقات'
+  alreadyActivated:'مفعّل بالفعل ✓',licInfo:'الترخيص',secondDevice:'هذا جهاز ثانٍ (استخدم نفس كود الجهاز الأول)',shareInv:'مشاركة الفاتورة',scanBarcode:'مسح باركود',scanning:'وجّه الكاميرا نحو الباركود...',cameraErr:'تعذّر فتح الكاميرا',noCamera:'لا توجد كاميرا متاحة',enterManually:'إدخال يدوي',enterBarcodeManually:'أدخل رقم الباركود يدوياً:',barcodeNotFound:'الباركود غير موجود — إضافة منتج جديد؟',addNewProduct:'إضافة منتج جديد',newCustomer:'زبون جديد',idCard:'رقم بطاقة الهوية',idCardPh:'رقم البطاقة (اختياري)',quickAddCust:'إضافة زبون سريع',confirmSaleTitle:'تأكيد البيع',confirmSale:'تأكيد وإتمام',prodImage:'صورة المنتج',addPhoto:'إضافة صورة',removePhoto:'حذف الصورة',searchInvoice:'ابحث برقم الفاتورة أو العميل...',printThermal:'طباعة حرارية',printThermal58:'طباعة حرارية صغيرة',printA4:'طباعة A4',printFormat:'اختر نوع الطباعة',genBarcode:'توليد باركود',printLabel:'طباعة ملصق',labelPreview:'معاينة الملصق',barcodePrinted:'جاهز للطباعة',genBarcodeHint:'توليد رقم باركود داخلي تلقائياً',noBarcodeYet:'لا يوجد باركود — ولّد واحداً أولاً',printLabelCount:'عدد الملصقات'
 });
 Object.assign(I18N.fr,{
   nav_sales:'Factures',salesHistory:'Historique des ventes',viewInv:'Voir la facture',reprint:'Réimprimer',refund:'Rembourser',
@@ -2384,7 +2458,7 @@ Object.assign(I18N.fr,{
   invalidCode:'Code invalide',activationOk:'Activé ! Merci de votre soutien.',
   contactSeller:'Contacter le vendeur',waMsg:'Bonjour, je veux activer Mobile POS. Mon ID :',
   backupBefore:'Faites une sauvegarde d\'abord',takeBackup:'Sauvegarde',
-  alreadyActivated:'Déjà activé ✓',licInfo:'Licence',secondDevice:'Ceci est un 2e appareil (même code que le 1er)',shareInv:'Partager la facture',scanBarcode:'Scanner code-barres',scanning:'Dirigez la caméra vers le code-barres...',cameraErr:'Impossible d\'ouvrir la caméra',noCamera:'Aucune caméra disponible',enterManually:'Saisie manuelle',enterBarcodeManually:'Entrez le code-barres :',barcodeNotFound:'Code-barres introuvable — ajouter un produit ?',addNewProduct:'Ajouter un produit',newCustomer:'Nouveau client',idCard:'N° carte d\'identité',idCardPh:'N° carte (optionnel)',quickAddCust:'Ajout rapide client',printThermal:'Impression thermique 80mm',printA4:'Impression A4',printFormat:'Choisir le type d\'impression',genBarcode:'Générer code-barres',printLabel:'Imprimer étiquette',labelPreview:'Aperçu étiquette',barcodePrinted:'Prêt à imprimer',genBarcodeHint:'Générer un code-barres interne',noBarcodeYet:'Pas de code-barres — générez-en un',printLabelCount:'Nombre d\'étiquettes'
+  alreadyActivated:'Déjà activé ✓',licInfo:'Licence',secondDevice:'Ceci est un 2e appareil (même code que le 1er)',shareInv:'Partager la facture',scanBarcode:'Scanner code-barres',scanning:'Dirigez la caméra vers le code-barres...',cameraErr:'Impossible d\'ouvrir la caméra',noCamera:'Aucune caméra disponible',enterManually:'Saisie manuelle',enterBarcodeManually:'Entrez le code-barres :',barcodeNotFound:'Code-barres introuvable — ajouter un produit ?',addNewProduct:'Ajouter un produit',newCustomer:'Nouveau client',idCard:'N° carte d\'identité',idCardPh:'N° carte (optionnel)',quickAddCust:'Ajout rapide client',confirmSaleTitle:'Confirmer la vente',confirmSale:'Confirmer',prodImage:'Image du produit',addPhoto:'Ajouter photo',removePhoto:'Supprimer',searchInvoice:'Rechercher facture ou client...',printThermal:'Impression thermique',printThermal58:'Thermique petite',printA4:'Impression A4',printFormat:'Choisir le type d\'impression',genBarcode:'Générer code-barres',printLabel:'Imprimer étiquette',labelPreview:'Aperçu étiquette',barcodePrinted:'Prêt à imprimer',genBarcodeHint:'Générer un code-barres interne',noBarcodeYet:'Pas de code-barres — générez-en un',printLabelCount:'Nombre d\'étiquettes'
 });
 Object.assign(I18N.en,{
   nav_sales:'Sales',salesHistory:'Sales history',viewInv:'View invoice',reprint:'Reprint',refund:'Refund',
@@ -2400,7 +2474,7 @@ Object.assign(I18N.en,{
   invalidCode:'Invalid activation code',activationOk:'Activated! Thank you for your support.',
   contactSeller:'Contact seller',waMsg:'Hello, I want to activate Mobile POS. My Install ID:',
   backupBefore:'Take a backup first',takeBackup:'Backup',
-  alreadyActivated:'Already activated ✓',licInfo:'License',secondDevice:'This is a 2nd device (use device-1 code)',shareInv:'Share invoice',scanBarcode:'Scan barcode',scanning:'Point the camera at the barcode...',cameraErr:'Cannot open camera',noCamera:'No camera available',enterManually:'Enter manually',enterBarcodeManually:'Enter the barcode number:',barcodeNotFound:'Barcode not found — add a new product?',addNewProduct:'Add new product',newCustomer:'New customer',idCard:'ID card number',idCardPh:'ID number (optional)',quickAddCust:'Quick add customer',printThermal:'Thermal print 80mm',printA4:'A4 print',printFormat:'Choose print type',genBarcode:'Generate barcode',printLabel:'Print label',labelPreview:'Label preview',barcodePrinted:'Ready to print',genBarcodeHint:'Auto-generate an internal barcode',noBarcodeYet:'No barcode — generate one first',printLabelCount:'Number of labels'
+  alreadyActivated:'Already activated ✓',licInfo:'License',secondDevice:'This is a 2nd device (use device-1 code)',shareInv:'Share invoice',scanBarcode:'Scan barcode',scanning:'Point the camera at the barcode...',cameraErr:'Cannot open camera',noCamera:'No camera available',enterManually:'Enter manually',enterBarcodeManually:'Enter the barcode number:',barcodeNotFound:'Barcode not found — add a new product?',addNewProduct:'Add new product',newCustomer:'New customer',idCard:'ID card number',idCardPh:'ID number (optional)',quickAddCust:'Quick add customer',confirmSaleTitle:'Confirm sale',confirmSale:'Confirm & complete',prodImage:'Product image',addPhoto:'Add photo',removePhoto:'Remove',searchInvoice:'Search invoice # or customer...',printThermal:'Thermal print',printThermal58:'Small thermal',printA4:'A4 print',printFormat:'Choose print type',genBarcode:'Generate barcode',printLabel:'Print label',labelPreview:'Label preview',barcodePrinted:'Ready to print',genBarcodeHint:'Auto-generate an internal barcode',noBarcodeYet:'No barcode — generate one first',printLabelCount:'Number of labels'
 });
 
 /* ---- Sync i18n ---- */
@@ -2675,7 +2749,38 @@ A.copyText=async function(txt){
   .sync-pill.green{color:var(--green)}.sync-pill.amber{color:var(--amber)}.sync-pill.red{color:var(--red)}.sync-pill.gray{color:var(--muted)}
   .sync-pill.syncing svg,.sync-pill.amber svg{animation:spin 1.4s linear infinite}
   @keyframes spin{to{transform:rotate(360deg)}}
-  @keyframes scanline{0%,100%{transform:translateY(-70px)}50%{transform:translateY(70px)}}`;
+  @keyframes scanline{0%,100%{transform:translateY(-70px)}50%{transform:translateY(70px)}}
+  /* Compact tappable item list (products/devices) */
+  .itemlist{display:flex;flex-direction:column;gap:8px}
+  .ilrow{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:14px;padding:13px 15px;cursor:pointer;transition:all .15s}
+  .ilrow:hover{border-color:var(--primary);background:var(--card2)}
+  .ilrow:active{transform:scale(.99)}
+  .il-main{flex:1;min-width:0}
+  .il-name{font-weight:700;font-size:14px;color:var(--text);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .il-sub{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+  .il-bc{font-size:11px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .il-right{text-align:end;flex-shrink:0}
+  .il-price{font-weight:800;font-size:14px;color:var(--primary2);margin-bottom:5px}
+  .il-actions{display:flex;gap:4px;flex-shrink:0;padding-inline-start:4px;border-inline-start:1px solid var(--border)}
+  @media(max-width:520px){.il-price{font-size:13px}.il-name{font-size:13px}}
+  /* Confirm sale dialog */
+  .confirm-sale .cs-total{display:flex;justify-content:space-between;align-items:center;padding:16px 18px;background:var(--primary-soft);border:1px solid var(--primary);border-radius:14px;margin-bottom:14px}
+  .confirm-sale .cs-total span{font-size:14px;color:var(--text2);font-weight:700}
+  .confirm-sale .cs-total b{font-size:24px;font-weight:900;color:var(--primary2)}
+  .confirm-sale .cs-rows{display:flex;flex-direction:column;gap:2px}
+  .confirm-sale .cs-row{display:flex;justify-content:space-between;padding:10px 4px;border-bottom:1px solid var(--border);font-size:14px}
+  .confirm-sale .cs-row:last-child{border-bottom:none}
+  .confirm-sale .cs-row span{color:var(--muted)}
+  .confirm-sale .cs-row b{color:var(--text);font-weight:700}
+  .confirm-sale .cs-row.due b{color:var(--red)}
+  /* Product image picker */
+  .img-picker{width:100%;height:150px;border:2px dashed var(--border2);border-radius:14px;overflow:hidden;cursor:pointer;display:grid;place-items:center;background:var(--card2);transition:all .15s}
+  .img-picker:hover{border-color:var(--primary)}
+  .img-picker img{width:100%;height:100%;object-fit:cover}
+  .img-ph{display:flex;flex-direction:column;align-items:center;gap:6px;color:var(--muted);font-size:13px;font-weight:700}
+  /* Product thumbnail in lists/tiles */
+  .il-thumb{width:46px;height:46px;border-radius:10px;object-fit:cover;flex-shrink:0;background:var(--card3);border:1px solid var(--border)}
+  .ptile .ptn{width:100%;height:64px;border-radius:9px;object-fit:cover;background:var(--card3);margin-bottom:2px}`;
   const s=document.createElement('style');s.textContent=css;document.head.appendChild(s);
   // Insert banner slot into topbar
   const app=document.querySelector('.app');if(!app)return;
@@ -2692,47 +2797,49 @@ VIEWS.sales=async function(){
   const from=S.filters.from||today.slice(0,8)+'01';
   const to=S.filters.to||today;
   const meth=S.filters.meth||'all';
+  const iq=(S.filters.iq||'').toLowerCase().trim();
   S.filters.from=from;S.filters.to=to;
   const all=(await DB.all('sales')).sort((a,b)=>b.createdAt.localeCompare(a.createdAt));
   const inRange=x=>x>=from&&x<=to;
-  const list=all.filter(s=>inRange(s.dateKey||dkey(s.createdAt))&&(meth==='all'||s.method===meth));
+  const list=all.filter(s=>inRange(s.dateKey||dkey(s.createdAt))&&(meth==='all'||s.method===meth)
+    &&(!iq||(s.no||'').toLowerCase().includes(iq)||(s.customerName||'').toLowerCase().includes(iq)||(s.customerPhone||'').includes(iq)));
   const rev=list.reduce((a,s)=>a+num(s.total),0);
   const profit=list.reduce((a,s)=>a+num(s.profit),0);
   const due=list.reduce((a,s)=>a+num(s.due),0);
   return `
   <div class="page-h"><div><div class="page-t">${t('nav_sales')}</div><div class="page-s">${list.length} · ${money(rev)} · ${t('profit')}: <span class="money pos-v">${money(profit)}</span></div></div>
     <button class="btn ghost" onclick="A.exportSalesCSV()">${icon('download',15)} CSV</button></div>
+  <div class="toolbar" style="margin-bottom:12px">
+    <div class="searchbox" style="flex:1;min-width:200px"><input class="inp" placeholder="${t('searchInvoice')}" value="${esc(S.filters.iq||'')}" oninput="S.filters.iq=this.value;A.render()"><span style="position:absolute;inset-inline-start:12px;top:50%;transform:translateY(-50%);color:var(--faint)">${icon('search',16)}</span></div>
+  </div>
   <div class="card" style="margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:end">
     ${F.inp('sf_from',t('from'),{type:'date',val:from})}
     ${F.inp('sf_to',t('to'),{type:'date',val:to})}
     <div class="field"><label class="lbl">${t('filterMethod')}</label>
       <select class="sel" id="sf_m">
         <option value="all"${meth==='all'?' selected':''}>${t('allMethods')}</option>
-        ${['cash','card','transfer','credit'].map(m=>'<option value="'+m+'"'+(meth===m?' selected':'')+'>'+payLbl(m)+'</option>').join('')}
+        ${['cash','credit'].map(m=>'<option value="'+m+'"'+(meth===m?' selected':'')+'>'+payLbl(m)+'</option>').join('')}
       </select></div>
     <button class="btn primary" onclick="S.filters.from=F.v('sf_from');S.filters.to=F.v('sf_to');S.filters.meth=F.v('sf_m');A.render()">${icon('search',15)} ${t('apply')}</button>
     <button class="btn ghost" onclick="S.filters={};A.render()">${t('reset')}</button>
   </div>
-  <div class="card" style="padding:8px 14px">
-  ${list.length?'<div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+t('invoice')+'</th><th>'+t('date')+'</th><th>'+t('client')+'</th><th>'+t('method')+'</th><th>'+t('itemsN')+'</th><th>'+t('total')+'</th><th>'+t('due')+'</th><th></th></tr></thead><tbody>'
-    +list.map(s=>'<tr style="cursor:pointer" onclick="A.viewInvoice(\'+s.id+\')"><td class="row-title">'+esc(s.no)+'</td>'
-      +'<td class="row-sub">'+fmtDate(s.createdAt)+' '+fmtTime(s.createdAt)+'</td>'
-      +'<td>'+esc(s.customerName||t('walkin'))+'</td>'
-      +'<td><span class="bdg gray">'+payLbl(s.method)+'</span></td>'
-      +'<td>'+(s.items||[]).reduce((a,i)=>a+num(i.qty),0)+'</td>'
-      +'<td class="money">'+money(s.total)+'</td>'
-      +'<td>'+(num(s.due)>0?'<span class="bdg red">'+money(s.due)+'</span>':'<span class="bdg green">'+t('paid')+'</span>')+'</td>'
-      +'<td style="text-align:end" onclick="event.stopPropagation()">'
-      +'<button class="iconbtn" onclick="A.viewInvoice(\'+s.id+\')" title="'+t('viewInv')+'">'+icon('search',15)+'</button>'
-      +'<button class="iconbtn red" onclick="A.refundSale(\'+s.id+\')" title="'+t('refund')+'">'+icon('trash',15)+'</button></td></tr>').join('')
-    +'</tbody></table></div>'
-    +'<div style="border-top:1px dashed var(--border);padding:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px"><span style="color:var(--muted);font-size:12.5px">'+list.length+' '+t('invoices')+'</span><span><b class="money" style="font-size:16px">'+money(rev)+'</b>'+(due>0?' <span class="bdg red">'+t('due')+': '+money(due)+'</span>':'')+'</span></div>'
-  :'<div class="empty"><div class="e-ico">'+icon('receipt',26)+'</div><b>'+t('noData')+'</b><span>'+t('noDataSub')+'</span></div>'}
-  </div>`;
+  ${list.length?'<div class="itemlist">'
+    +list.map(s=>{const items=(s.items||[]).reduce((a,i)=>a+num(i.qty),0);
+      return '<div class="ilrow" onclick="A.viewInvoice(\''+s.id+'\')">'
+        +'<div class="il-main"><div class="il-name">'+esc(s.no)+' · '+esc(s.customerName||t('walkin'))+'</div>'
+        +'<div class="il-sub"><span class="il-bc">'+fmtDate(s.createdAt)+' '+fmtTime(s.createdAt)+'</span> <span class="bdg gray">'+payLbl(s.method)+'</span> <span class="bdg gray">'+items+' '+t('itemsN')+'</span></div></div>'
+        +'<div class="il-right"><div class="il-price">'+money(s.total)+'</div><div>'+(num(s.due)>0?'<span class="bdg red">'+t('due')+' '+money(s.due)+'</span>':'<span class="bdg green">'+t('paid')+'</span>')+'</div></div>'
+        +'<div class="il-actions" onclick="event.stopPropagation()">'
+        +'<button class="iconbtn" onclick="A.reprintDirect(\''+s.id+'\')" title="'+t('reprint')+'">'+icon('printer',15)+'</button>'
+        +'<button class="iconbtn" onclick="A._shareFromView(\''+s.id+'\')" title="'+t('shareInv')+'">'+icon('share',15)+'</button>'
+        +'</div></div>'}).join('')
+    +'</div>'
+    +'<div class="card" style="margin-top:12px;padding:14px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px"><span style="color:var(--muted);font-size:12.5px">'+list.length+' '+t('invoices')+'</span><span><b class="money" style="font-size:16px">'+money(rev)+'</b>'+(due>0?' <span class="bdg red">'+t('due')+': '+money(due)+'</span>':'')+'</span></div>'
+  :'<div class="card"><div class="empty"><div class="e-ico">'+icon('receipt',26)+'</div><b>'+t('noData')+'</b><span>'+t('noDataSub')+'</span></div></div>'}`;
 };
 A.viewInvoice=async function(id){
   const s=await DB.get('sales',id);if(!s)return;
-  const rows=(s.items||[]).map(i=>'<tr><td>'+esc(i.name)+(i.imei?'<br><small style="color:var(--muted)">IMEI: '+esc(i.imei)+'</small>':'')+'</td><td class="row-sub">'+i.qty+' × '+money(i.price)+'</td><td class="money" style="text-align:end"><b>'+money(i.price*i.qty)+'</b></td></tr>').join('');
+  const rows=(s.items||[]).map(i=>'<tr><td>'+esc(i.name)+(i.imei?'<br><small style="color:var(--muted)">IMEI: '+esc(i.imei)+'</small>':'')+'</td><td class="row-sub">'+i.qty+' × '+money(i.price)+'</td><td class="money" style="text-align:end"><b>'+money(r2(num(i.price)*num(i.qty)))+'</b></td></tr>').join('');
   openModal({title:t('invoice')+' — '+esc(s.no),wide:true,body:`
     <div class="grid" style="grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
       <div class="kpi k1" style="padding:12px"><div class="kpi-label">${t('date')}</div><div class="kpi-val" style="font-size:14px">${fmtDate(s.createdAt)}</div></div>
@@ -2749,12 +2856,20 @@ A.viewInvoice=async function(id){
     <div class="cart-tot"><span>${t('paid')}</span><b class="money">${money(s.paid)}</b></div>
     ${num(s.due)>0?'<div class="cart-tot"><span>'+t('due')+'</span><b class="money neg-v">'+money(s.due)+'</b></div>':''}
   `,footer:'<button class="btn ghost" onclick="closeModal()">'+t('close')+'</button>'
-    +'<button class="btn danger" onclick="A.refundSale(\'+s.id+\')">'+icon('trash',15)+' '+t('refund')+'</button>'
-    +'<button class="btn primary" onclick="A.reprintSale(\'+s.id+\')">'+icon('printer',15)+' '+t('reprint')+'</button>'});
+    +'<button class="btn danger" onclick="A.refundSale(\''+s.id+'\')">'+icon('trash',15)+' '+t('refund')+'</button>'
+    +'<button class="btn ghost" onclick="A._shareFromView(\''+s.id+'\')">'+icon('share',15)+' '+t('shareInv')+'</button>'
+    +'<button class="btn primary" onclick="A.reprintSale(\''+s.id+'\')">'+icon('printer',15)+' '+t('reprint')+'</button>'});
 };
+A._shareFromView=async function(id){const s=await DB.get('sales',id);if(!s)return;A._lastReceipt=s;closeModal();A.shareInvoice()};
 A.reprintSale=async function(id){
   const s=await DB.get('sales',id);if(!s)return;
   closeModal();showReceipt(s);
+};
+A.reprintDirect=async function(id){
+  const s=await DB.get('sales',id);if(!s)return;
+  A._lastReceipt=s;
+  const f=await DB.kvGet('printFmt');
+  doPrint(f&&f!=='a4'?f:'thermal');   // straight to print window with printer picker
 };
 A.refundSale=async function(id){
   if(!await confirmDlg(t('refundConfirm')))return;
