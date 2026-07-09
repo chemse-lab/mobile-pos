@@ -822,6 +822,9 @@ const S={view:'dashboard',lang:'ar',theme:'light',settings:{},cart:[],cartCustom
 const $=id=>document.getElementById(id);
 const t=k=>(I18N[S.lang]&&I18N[S.lang][k])||I18N.ar[k]||k;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+// CSV cell: neutralize spreadsheet formula injection (=, +, -, @, tab, CR) for
+// non-numeric text, then quote/escape. Plain numbers keep their type for SUM etc.
+const csvCell=v=>{let s=String(v??'');if(/^[=+\-@\t\r]/.test(s)&&!/^-?\d+(\.\d+)?$/.test(s))s="'"+s;return '"'+s.replace(/"/g,'""')+'"'};
 const num=v=>{const n=parseFloat(v);return isFinite(n)?n:0};
 const r2=n=>Math.round((num(n)+Number.EPSILON)*100)/100;  // round money to 2 decimals (kills float noise)
 const fmt=n=>Math.round(num(n)).toLocaleString('en-US');
@@ -1006,7 +1009,7 @@ const gsRun=debounce(async q=>{
   let h='';
   if(P.length)h+='<div class="sr-cat">'+t('nav_products')+'</div>'+P.map(p=>'<button class="sr-item" onclick="A.go(\'products\');$(\'gsDrop\').classList.remove(\'open\')"><span class="li-ico" style="background:var(--grad-soft);color:var(--violet)">'+icon('box',17)+'</span><span><span class="t">'+esc(p.name)+'</span><br><span class="s">'+money(p.sell)+' · '+t('stock')+': '+p.qty+'</span></span></button>').join('');
   if(D.length)h+='<div class="sr-cat">'+t('nav_devices')+'</div>'+D.map(d=>'<button class="sr-item" onclick="A.go(\'devices\')"><span class="li-ico" style="background:var(--cyan-soft);color:var(--cyan)">'+icon('phone',17)+'</span><span><span class="t">'+esc(d.brand+' '+d.model)+'</span><br><span class="s">IMEI: '+esc(d.imei1||'—')+'</span></span></button>').join('');
-  if(C.length)h+='<div class="sr-cat">'+t('nav_customers')+'</div>'+C.map(c=>'<button class="sr-item" onclick="A.openCustomer(\'+c.id+\')"><span class="li-ico" style="background:var(--green-soft);color:var(--green)">'+icon('user',17)+'</span><span><span class="t">'+esc(c.name)+'</span><br><span class="s">'+esc(c.phone||'')+'</span></span></button>').join('');
+  if(C.length)h+='<div class="sr-cat">'+t('nav_customers')+'</div>'+C.map(c=>'<button class="sr-item" onclick="A.openCustomer(\''+c.id+'\')"><span class="li-ico" style="background:var(--green-soft);color:var(--green)">'+icon('user',17)+'</span><span><span class="t">'+esc(c.name)+'</span><br><span class="s">'+esc(c.phone||'')+'</span></span></button>').join('');
   drop.innerHTML=h||'<div class="empty" style="padding:22px"><span>'+t('noData')+'</span></div>';
   drop.classList.add('open');
 },220);
@@ -1282,7 +1285,7 @@ function receiptHTML(s){
   <tr><td>${t('client')}</td><td style="text-align:end">${esc(s.customerName||t('walkin'))}</td></tr>
   ${s.customerIdCard?'<tr><td>'+t('idCard')+'</td><td style="text-align:end">'+esc(s.customerIdCard)+'</td></tr>':''}</table>
   <div class="rc-line"></div>
-  <table>${s.items.map(i=>'<tr><td>'+esc(i.name)+(i.imei?'<br><small>IMEI: '+esc(i.imei)+'</small>':'')+'<br><small>'+i.qty+' × '+fmt(i.price)+'</small></td><td style="text-align:end;vertical-align:bottom"><b>'+fmt(i.price*i.qty)+'</b></td></tr>').join('')}</table>
+  <table>${s.items.map(i=>'<tr><td>'+esc(i.name)+(i.imei?'<br><small>IMEI: '+esc(i.imei)+'</small>':'')+'<br><small>'+i.qty+' × '+fmt(i.price)+'</small></td><td style="text-align:end;vertical-align:bottom"><b>'+fmt(r2(num(i.price)*num(i.qty)))+'</b></td></tr>').join('')}</table>
   <div class="rc-line"></div>
   <table><tr><td>${t('subtotal')}</td><td style="text-align:end">${fmt(s.subtotal)}</td></tr>
   ${s.discount?'<tr><td>'+t('discount')+'</td><td style="text-align:end">- '+fmt(s.discount)+'</td></tr>':''}
@@ -1336,13 +1339,17 @@ function printCSS(mode){
     td{padding:2.5px 0;vertical-align:top}`;
   if(mode==='thermal')return common+`
     .thermal{width:72mm;margin:0 auto;font-size:12px;padding:2mm 1mm}
-    @page{size:80mm auto;margin:2mm}
+    @page{size:80mm 3000mm;margin:2mm}
     @media print{body{width:76mm}}`;
   if(mode==='thermal58')return common+`
-    .thermal{width:50mm;margin:0 auto;font-size:10.5px;padding:1mm}
-    .thermal table td{padding:2px 0}
-    @page{size:58mm auto;margin:1.5mm}
-    @media print{body{width:55mm}}`;
+    .thermal{width:52mm;margin:0 auto;font-size:11px;padding:1mm;line-height:1.35;font-weight:600;color:#000}
+    .thermal .rc-center>div:first-child{font-size:14px;font-weight:900}
+    .thermal table{width:100%}
+    .thermal table td{padding:1.5px 0;font-weight:600}
+    .thermal small{font-size:9.5px}
+    .thermal .rc-line{border-top:1px dashed #000;margin:4px 0}
+    @page{size:58mm 3000mm;margin:1mm}
+    @media print{body{width:56mm}}`;
   if(mode==='a4')return common+`
     .a4{width:100%;max-width:190mm;margin:0 auto;padding:16mm 14mm;font-size:13px}
     .a4-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #222;padding-bottom:14px;margin-bottom:18px}
@@ -1810,10 +1817,10 @@ VIEWS.repairs=async function(){
       <div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:var(--muted)">${t('finalPrice')}</span><b class="money">${money(final)}</b></div>
       <div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:var(--muted)">${t('remaining')}</span><b class="money ${remain>0?'neg-v':'pos-v'}">${money(remain)}</b></div>
       <div style="display:flex;gap:7px;margin-top:auto">
-        ${canNext?'<button class="btn sm ghost" style="flex:1" onclick="A.repairNext(\'+r.id+\')">'+icon('zap',14)+' '+t('nextStatus')+'</button>':''}
-        ${r.status==='ready'?'<button class="btn sm success" style="flex:1" onclick="A.repairDeliver(\'+r.id+\')">'+icon('check',14)+' '+t('deliver')+'</button>':''}
+        ${canNext?'<button class="btn sm ghost" style="flex:1" onclick="A.repairNext(\''+r.id+'\')">'+icon('zap',14)+' '+t('nextStatus')+'</button>':''}
+        ${r.status==='ready'?'<button class="btn sm success" style="flex:1" onclick="A.repairDeliver(\''+r.id+'\')">'+icon('check',14)+' '+t('deliver')+'</button>':''}
         <button class="iconbtn" onclick="A.repairForm('${r.id}')" aria-label="edit">${icon('edit',15)}</button>
-        ${!['delivered'].includes(r.status)?'<button class="iconbtn red" onclick="A.repairCancel(\'+r.id+\')" aria-label="cancel">'+icon('x',15)+'</button>':''}
+        ${!['delivered'].includes(r.status)?'<button class="iconbtn red" onclick="A.repairCancel(\''+r.id+'\')" aria-label="cancel">'+icon('x',15)+'</button>':''}
       </div></div>`}).join('')
   :'<div class="empty" style="grid-column:1/-1"><div class="e-ico">'+icon('wrench',26)+'</div><b>'+t('noData')+'</b><span>'+t('noDataSub')+'</span></div>'}
   </div>`;
@@ -1883,12 +1890,12 @@ VIEWS.customers=async function(){
   <div class="toolbar"><div class="searchbox"><input class="inp" placeholder="${t('search')}" value="${esc(S.filters.q||'')}" oninput="S.filters.q=this.value;A.render()"><span style="position:absolute;inset-inline-start:12px;top:50%;transform:translateY(-50%);color:var(--faint)">${icon('search',16)}</span></div></div>
   <div class="card" style="padding:8px 14px">
   ${list.length?'<div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+t('name')+'</th><th>'+t('phoneN')+'</th><th>'+t('totalPurchases')+'</th><th>'+t('invCount')+'</th><th>'+t('debt')+'</th><th></th></tr></thead><tbody>'
-    +list.map(c=>'<tr style="cursor:pointer" onclick="A.openCustomer(\'+c.id+\')"><td><span class="row-title">'+esc(c.name)+'</span></td><td class="row-sub">'+esc(c.phone||'—')+'</td>'
+    +list.map(c=>'<tr style="cursor:pointer" onclick="A.openCustomer(\''+c.id+'\')"><td><span class="row-title">'+esc(c.name)+'</span></td><td class="row-sub">'+esc(c.phone||'—')+'</td>'
       +'<td class="money">'+money(c.totalSpent)+'</td><td>'+num(c.invCount)+'</td>'
       +'<td>'+(num(c.debt)>0?'<span class="bdg red">'+money(c.debt)+'</span>':'<span class="bdg green">'+t('noDebt')+'</span>')+'</td>'
       +'<td style="text-align:end" onclick="event.stopPropagation()">'
-      +(num(c.debt)>0?'<button class="btn xs success" onclick="A.payDebtForm(\'+c.id+\')">'+t('payDebt')+'</button> ':'')
-      +'<button class="iconbtn" onclick="A.customerForm(\'+c.id+\')" aria-label="edit">'+icon('edit',15)+'</button><button class="iconbtn red" onclick="A.delItem(\'customers\',\''+c.id+'\')" aria-label="delete">'+icon('trash',15)+'</button></td></tr>').join('')
+      +(num(c.debt)>0?'<button class="btn xs success" onclick="A.payDebtForm(\''+c.id+'\')">'+t('payDebt')+'</button> ':'')
+      +'<button class="iconbtn" onclick="A.customerForm(\''+c.id+'\')" aria-label="edit">'+icon('edit',15)+'</button><button class="iconbtn red" onclick="A.delItem(\'customers\',\''+c.id+'\')" aria-label="delete">'+icon('trash',15)+'</button></td></tr>').join('')
     +'</tbody></table></div>'
   :'<div class="empty"><div class="e-ico">'+icon('users',26)+'</div><b>'+t('noData')+'</b><span>'+t('noDataSub')+'</span></div>'}
   </div>`;
@@ -1924,7 +1931,7 @@ A.openCustomer=async function(id){
     ${sales.length?'<div class="tbl-wrap"><table class="tbl" style="min-width:420px"><thead><tr><th>'+t('invoice')+'</th><th>'+t('date')+'</th><th>'+t('method')+'</th><th>'+t('total')+'</th></tr></thead><tbody>'
       +sales.map(s=>'<tr><td class="row-title">'+esc(s.no)+'</td><td class="row-sub">'+fmtDate(s.createdAt)+'</td><td>'+payLbl(s.method)+'</td><td class="money">'+money(s.total)+'</td></tr>').join('')+'</tbody></table></div>'
     :'<div class="empty" style="padding:22px"><span>'+t('noData')+'</span></div>'}`,
-    footer:(num(c.debt)>0?'<button class="btn success" onclick="A.payDebtForm(\'+c.id+\')">'+icon('money',16)+' '+t('payDebt')+'</button>':'')
+    footer:(num(c.debt)>0?'<button class="btn success" onclick="A.payDebtForm(\''+c.id+'\')">'+icon('money',16)+' '+t('payDebt')+'</button>':'')
       +'<button class="btn ghost" onclick="closeModal()">'+t('close')+'</button>'});
 };
 A.payDebtForm=async function(id){
@@ -1936,7 +1943,7 @@ A.payDebtForm=async function(id){
     onOpen:()=>{$('pdBtn').onclick=async()=>{
       const amt=Math.min(F.n('f_amt'),num(c.debt));
       if(amt<=0)return;
-      c.debt=num(c.debt)-amt;await DB.put('customers',c);
+      c.debt=r2(num(c.debt)-amt);await DB.put('customers',c);
       await DB.add('payments',{customerId:c.id,customerName:c.name,amount:amt,dateKey:dkey(),createdAt:nowISO()});
       closeModal();toast(t('debtPaid'));A.render();
     }}});
@@ -1951,7 +1958,7 @@ VIEWS.suppliers=async function(){
   <div class="card" style="padding:8px 14px">
   ${sups.length?'<div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+t('name')+'</th><th>'+t('phoneN')+'</th><th>'+t('note')+'</th><th>'+t('totalPurchases')+'</th><th></th></tr></thead><tbody>'
     +sups.map(s=>'<tr><td class="row-title">'+esc(s.name)+'</td><td class="row-sub">'+esc(s.phone||'—')+'</td><td class="row-sub">'+esc(s.note||'—')+'</td><td class="money">'+money(s.totalPurchases)+'</td>'
-      +'<td style="text-align:end"><button class="iconbtn" onclick="A.supplierForm(\'+s.id+\')" aria-label="edit">'+icon('edit',15)+'</button><button class="iconbtn red" onclick="A.delItem(\'suppliers\',\''+s.id+'\')" aria-label="delete">'+icon('trash',15)+'</button></td></tr>').join('')
+      +'<td style="text-align:end"><button class="iconbtn" onclick="A.supplierForm(\''+s.id+'\')" aria-label="edit">'+icon('edit',15)+'</button><button class="iconbtn red" onclick="A.delItem(\'suppliers\',\''+s.id+'\')" aria-label="delete">'+icon('trash',15)+'</button></td></tr>').join('')
     +'</tbody></table></div>'
   :'<div class="empty"><div class="e-ico">'+icon('truck',26)+'</div><b>'+t('noData')+'</b><span>'+t('noDataSub')+'</span></div>'}
   </div>`;
@@ -2047,7 +2054,7 @@ VIEWS.expenses=async function(){
   <div class="card" style="padding:8px 14px">
   ${exs.length?'<div class="tbl-wrap"><table class="tbl"><thead><tr><th>'+t('date')+'</th><th>'+t('title')+'</th><th>'+t('category')+'</th><th>'+t('amount')+'</th><th></th></tr></thead><tbody>'
     +exs.map(e=>'<tr><td class="row-sub">'+fmtDate(e.date)+'</td><td class="row-title">'+esc(e.title)+'</td><td><span class="bdg gray">'+t(e.category)+'</span></td><td class="money neg-v">'+money(e.amount)+'</td>'
-      +'<td style="text-align:end"><button class="iconbtn" onclick="A.expenseForm(\'+e.id+\')" aria-label="edit">'+icon('edit',15)+'</button><button class="iconbtn red" onclick="A.delItem(\'expenses\',\''+e.id+'\')" aria-label="delete">'+icon('trash',15)+'</button></td></tr>').join('')
+      +'<td style="text-align:end"><button class="iconbtn" onclick="A.expenseForm(\''+e.id+'\')" aria-label="edit">'+icon('edit',15)+'</button><button class="iconbtn red" onclick="A.delItem(\'expenses\',\''+e.id+'\')" aria-label="delete">'+icon('trash',15)+'</button></td></tr>').join('')
     +'</tbody></table></div>'
   :'<div class="empty"><div class="e-ico">'+icon('wallet',26)+'</div><b>'+t('noData')+'</b><span>'+t('noDataSub')+'</span></div>'}
   </div>`;
@@ -2140,7 +2147,7 @@ A.exportSalesCSV=async function(){
   const sales=(await DB.all('sales')).sort((a,b)=>a.createdAt.localeCompare(b.createdAt));
   const rows=[['no','date','customer','method','subtotal','discount','total','cost','profit','paid','due']];
   sales.forEach(s=>rows.push([s.no,s.createdAt,s.customerName||'',s.method,s.subtotal,s.discount,s.total,s.cost,s.profit,s.paid,s.due]));
-  const csv=rows.map(r=>r.map(c=>'"'+String(c).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const csv=rows.map(r=>r.map(csvCell).join(',')).join('\n');
   const url=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));
   const a=document.createElement('a');a.href=url;a.download='sales-'+dkey()+'.csv';a.click();URL.revokeObjectURL(url);
   toast(t('exported'));
@@ -2879,7 +2886,7 @@ A.refundSale=async function(id){
     if(it.type==='product'){const p=await DB.get('products',it.refId);if(p){p.qty=num(p.qty)+num(it.qty);await DB.put('products',p)}}
     else if(it.type==='device'){const d=await DB.get('devices',it.refId);if(d){d.status='available';delete d.soldAt;delete d.saleNo;await DB.put('devices',d)}}
   }
-  if(s.customerId){const c=await DB.get('customers',s.customerId);if(c){c.debt=Math.max(0,num(c.debt)-num(s.due));c.totalSpent=Math.max(0,num(c.totalSpent)-num(s.total));c.invCount=Math.max(0,num(c.invCount)-1);await DB.put('customers',c)}}
+  if(s.customerId){const c=await DB.get('customers',s.customerId);if(c){c.debt=r2(Math.max(0,num(c.debt)-num(s.due)));c.totalSpent=r2(Math.max(0,num(c.totalSpent)-num(s.total)));c.invCount=Math.max(0,num(c.invCount)-1);await DB.put('customers',c)}}
   await DB.del('sales',id);
   closeModal();toast(t('refunded'));A.render();
 };
