@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.vancash.erp",
+      "sha256_cert_fingerprints": [
+        "FC:92:6A:34:E1:CF:58:91:F2:D6:2D:E2:18:A4:C0:30:BF:0E:4C:F5:9D:85:96:12:0D:D2:21:B0:E6:F9:F5:69"
+      ]
+    }
+  }
+]
